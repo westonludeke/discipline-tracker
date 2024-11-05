@@ -1,6 +1,7 @@
 import express from 'express';
 import { body, validationResult } from 'express-validator';
 import bcrypt from 'bcrypt';
+import passport from 'passport';
 import User from '../models/User.js';
 
 const router = express.Router();
@@ -43,5 +44,24 @@ router.post(
     }
   }
 );
+
+router.post('/login', (req, res, next) => {
+  passport.authenticate('local', (err, user, info) => {
+    if (err) {
+      console.error('Login error:', err);
+      return next(err);
+    }
+    if (!user) {
+      return res.status(400).json({ message: info.message });
+    }
+    req.logIn(user, (err) => {
+      if (err) {
+        console.error('Error in req.logIn:', err);
+        return next(err);
+      }
+      return res.status(200).json({ message: 'Login successful', user: { id: user._id, username: user.username, email: user.email } });
+    });
+  })(req, res, next);
+});
 
 export default router;
