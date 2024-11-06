@@ -7,11 +7,16 @@ import passport from 'passport';
 import MongoStore from 'connect-mongo';
 import userRoutes from './routes/userRoutes.js';
 import configurePassport from './config/passport.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 app.use(express.json());
 app.use(bodyParser.json());
@@ -44,6 +49,15 @@ app.use('/api/users', userRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Welcome to the Discipline Tracker API' });
+});
+
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, 'dist')));
+
+// The "catchall" handler: for any request that doesn't
+// match one above, send back React's index.html file.
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
 app.listen(PORT, () => {
