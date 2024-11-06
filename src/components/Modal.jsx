@@ -10,6 +10,7 @@ function Modal({ show, handleClose, children }) {
       <div className="modal-dialog" role="document">
         <div className="modal-content">
           <div className="modal-header">
+            <h5 className="modal-title">Manage Goals</h5>
             <button type="button" className="close" onClick={handleClose}>
               <span>&times;</span>
             </button>

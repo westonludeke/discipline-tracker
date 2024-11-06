@@ -1,0 +1,30 @@
+import express from 'express';
+import Goal from '../models/Goal.js';
+
+const router = express.Router();
+
+router.post('/', async (req, res) => {
+  console.log('Received POST request to /api/goals:', req.body);
+  try {
+    const { name, targetMinutes } = req.body;
+    const newGoal = new Goal({ name, targetMinutes });
+    await newGoal.save();
+    res.status(201).json(newGoal);
+  } catch (error) {
+    console.error('Error creating goal:', error);
+    res.status(400).json({ message: error.message });
+  }
+});
+
+router.get('/', async (req, res) => {
+  console.log('Received GET request to /api/goals');
+  try {
+    const goals = await Goal.find();
+    res.json(goals);
+  } catch (error) {
+    console.error('Error fetching goals:', error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+export default router;
