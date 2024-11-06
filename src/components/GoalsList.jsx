@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 
 function GoalsList({ goals, onSaveProgress }) {
-  const [progress, setProgress] = useState({});
+  const [enteredMinutes, setEnteredMinutes] = useState({});
 
-  const handleProgressChange = (goalId, value) => {
-    setProgress(prevProgress => ({
-      ...prevProgress,
+  const handleInputChange = (goalId, value) => {
+    setEnteredMinutes(prev => ({
+      ...prev,
       [goalId]: value
     }));
-    onSaveProgress(goalId, value);
+    onSaveProgress(goalId, value).catch(error => {
+      console.error('Error saving progress:', error.response ? error.response.data : error);
+    });
   };
 
   return (
@@ -24,13 +26,19 @@ function GoalsList({ goals, onSaveProgress }) {
               <div>
                 <input
                   type="number"
+                  min="0"
+                  value={enteredMinutes[goal._id] || ''}
+                  onChange={(e) => handleInputChange(goal._id, e.target.value)}
                   className="form-control d-inline-block mr-2"
                   style={{ width: '80px' }}
-                  value={progress[goal._id] || ''}
-                  onChange={(e) => handleProgressChange(goal._id, e.target.value)}
-                  placeholder="Minutes"
                 />
-                <span className="badge bg-primary rounded-pill">{goal.targetMinutes} min</span>
+                <span>{(enteredMinutes[goal._id] || 0)}/{goal.targetMinutes} minutes</span>
+                <button
+                  onClick={() => onSaveProgress(goal._id, enteredMinutes[goal._id])}
+                  className="btn btn-primary btn-sm ml-2"
+                >
+                  Save
+                </button>
               </div>
             </li>
           ))}
