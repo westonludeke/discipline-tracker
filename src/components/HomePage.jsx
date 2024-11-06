@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import dayjs from 'dayjs';
 import { getGoals } from '../api/goals';
+import { saveProgress } from '../api/progress';
 import GoalsList from './GoalsList';
 
 function HomePage() {
@@ -17,7 +18,15 @@ function HomePage() {
       setGoals(fetchedGoals);
     } catch (error) {
       console.error('Error fetching goals:', error);
-      // You might want to add error handling UI here
+    }
+  };
+
+  const handleSaveProgress = async (goalId, minutes) => {
+    try {
+      await saveProgress(goalId, minutes);
+      console.log('Progress saved successfully');
+    } catch (error) {
+      console.error('Error saving progress:', error);
     }
   };
 
@@ -27,7 +36,7 @@ function HomePage() {
         <h1>Discipline Tracker</h1>
         <h2 className="text-muted">{currentDate}</h2>
       </header>
-      <GoalsList goals={goals} />
+      <GoalsList goals={goals} onSaveProgress={handleSaveProgress} />
     </div>
   );
 }

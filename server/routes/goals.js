@@ -85,4 +85,21 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+// New route for saving progress
+router.post('/progress', async (req, res) => {
+  try {
+    const { goalId, minutes } = req.body;
+    const goal = await Goal.findById(goalId);
+    if (!goal) {
+      return res.status(404).json({ message: 'Goal not found' });
+    }
+    // For now, we'll just log the progress. In a future task, we'll implement proper storage.
+    console.log(`Progress for goal ${goalId}: ${minutes} minutes`);
+    res.status(200).json({ message: 'Progress saved successfully' });
+  } catch (error) {
+    console.error('Error saving progress:', error);
+    res.status(500).json({ message: 'Error saving progress', error: error.message });
+  }
+});
+
 export default router;
