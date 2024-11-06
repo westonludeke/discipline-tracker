@@ -1,15 +1,27 @@
-import { Link } from 'react-router-dom';
-import './App.css'
+import React from 'react';
+import { Link, Routes, Route } from 'react-router-dom';
+import './App.css';
+import HomePage from './components/HomePage';
+import Goals from './components/Goals';
 
 function App() {
+  console.log('Rendering App component');
   return (
     <>
-      <h1>discipline-tracker-app</h1>
-      <nav>
-        <Link to="/goals" className="btn btn-primary">Go to Goals</Link>
+      <nav className="navbar navbar-expand-lg navbar-light bg-light">
+        <div className="container-fluid">
+          <Link className="navbar-brand" to="/">Discipline Tracker</Link>
+          <div className="navbar-nav">
+            <Link className="nav-link" to="/goals">Goals</Link>
+          </div>
+        </div>
       </nav>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/goals" element={<Goals />} />
+      </Routes>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
