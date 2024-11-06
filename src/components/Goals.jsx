@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import Modal from './Modal';
-import { createGoal, getGoals } from '../api/goals';
+import { createGoal, getGoals, updateGoal } from '../api/goals';
 
 function Goals() {
   const [showModal, setShowModal] = useState(false);
   const [goalName, setGoalName] = useState('');
   const [targetMinutes, setTargetMinutes] = useState('');
   const [goals, setGoals] = useState([]);
+  const [editingGoal, setEditingGoal] = useState(null);
 
   useEffect(() => {
     fetchGoals();
@@ -21,12 +22,22 @@ function Goals() {
     }
   };
 
-  const handleOpenModal = () => {
+  const handleOpenModal = (goal = null) => {
+    if (goal) {
+      setEditingGoal(goal);
+      setGoalName(goal.name);
+      setTargetMinutes(goal.targetMinutes.toString());
+    } else {
+      setEditingGoal(null);
+      setGoalName('');
+      setTargetMinutes('');
+    }
     setShowModal(true);
   };
 
   const handleCloseModal = () => {
     setShowModal(false);
+    setEditingGoal(null);
     setGoalName('');
     setTargetMinutes('');
   };
@@ -34,22 +45,26 @@ function Goals() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await createGoal({ name: goalName, targetMinutes: parseInt(targetMinutes) });
+      if (editingGoal) {
+        await updateGoal(editingGoal._id, { name: goalName, targetMinutes: parseInt(targetMinutes) });
+      } else {
+        await createGoal({ name: goalName, targetMinutes: parseInt(targetMinutes) });
+      }
       handleCloseModal();
       fetchGoals();
     } catch (error) {
-      console.error('Error creating goal:', error);
+      console.error('Error saving goal:', error);
     }
   };
 
   return (
     <div className="container mt-5">
       <h1>Goals</h1>
-      <button className="btn btn-primary" onClick={handleOpenModal}>
+      <button className="btn btn-primary" onClick={() => handleOpenModal()}>
         Manage Goals
       </button>
       <Modal show={showModal} handleClose={handleCloseModal}>
-        <h2>Manage Goals</h2>
+        <h2>{editingGoal ? 'Edit Goal' : 'Add New Goal'}</h2>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="goalName">Goal Name</label>
@@ -74,13 +89,18 @@ function Goals() {
               min="1"
             />
           </div>
-          <button type="submit" className="btn btn-primary">Save Goal</button>
+          <button type="submit" className="btn btn-primary">
+            {editingGoal ? 'Update Goal' : 'Save Goal'}
+          </button>
         </form>
       </Modal>
       <ul className="list-group mt-3">
         {goals.map((goal) => (
-          <li key={goal._id} className="list-group-item">
+          <li key={goal._id} className="list-group-item d-flex justify-content-between align-items-center">
             {goal.name} - {goal.targetMinutes} minutes
+            <button className="btn btn-sm btn-outline-primary" onClick={() => handleOpenModal(goal)}>
+              Edit
+            </button>
           </li>
         ))}
       </ul>

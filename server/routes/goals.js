@@ -27,4 +27,20 @@ router.get('/', async (req, res) => {
   }
 });
 
+router.put('/:id', async (req, res) => {
+  console.log('Received PUT request to /api/goals/:id', req.params.id, req.body);
+  try {
+    const { id } = req.params;
+    const { name, targetMinutes } = req.body;
+    const updatedGoal = await Goal.findByIdAndUpdate(id, { name, targetMinutes }, { new: true });
+    if (!updatedGoal) {
+      return res.status(404).json({ message: 'Goal not found' });
+    }
+    res.json(updatedGoal);
+  } catch (error) {
+    console.error('Error updating goal:', error);
+    res.status(400).json({ message: error.message });
+  }
+});
+
 export default router;
