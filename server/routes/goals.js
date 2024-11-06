@@ -7,12 +7,25 @@ router.post('/', async (req, res) => {
   console.log('Received POST request to /api/goals:', req.body);
   try {
     const { name, targetMinutes } = req.body;
-    const newGoal = new Goal({ name, targetMinutes });
-    await newGoal.save();
-    res.status(201).json(newGoal);
+
+    if (!name || name.trim() === '') {
+      return res.status(400).json({ message: 'Goal name cannot be empty' });
+    }
+
+    if (!targetMinutes || isNaN(targetMinutes) || targetMinutes <= 0) {
+      return res.status(400).json({ message: 'Target minutes must be a positive number' });
+    }
+
+    const goal = new Goal({
+      name: name.trim(),
+      targetMinutes: parseInt(targetMinutes),
+    });
+
+    const savedGoal = await goal.save();
+    res.status(201).json(savedGoal);
   } catch (error) {
     console.error('Error creating goal:', error);
-    res.status(400).json({ message: error.message });
+    res.status(500).json({ message: 'Error creating goal', error: error.message });
   }
 });
 
@@ -30,16 +43,30 @@ router.get('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   console.log('Received PUT request to /api/goals/:id', req.params.id, req.body);
   try {
-    const { id } = req.params;
     const { name, targetMinutes } = req.body;
-    const updatedGoal = await Goal.findByIdAndUpdate(id, { name, targetMinutes }, { new: true });
+
+    if (!name || name.trim() === '') {
+      return res.status(400).json({ message: 'Goal name cannot be empty' });
+    }
+
+    if (!targetMinutes || isNaN(targetMinutes) || targetMinutes <= 0) {
+      return res.status(400).json({ message: 'Target minutes must be a positive number' });
+    }
+
+    const updatedGoal = await Goal.findByIdAndUpdate(
+      req.params.id,
+      { name: name.trim(), targetMinutes: parseInt(targetMinutes) },
+      { new: true, runValidators: true }
+    );
+
     if (!updatedGoal) {
       return res.status(404).json({ message: 'Goal not found' });
     }
+
     res.json(updatedGoal);
   } catch (error) {
     console.error('Error updating goal:', error);
-    res.status(400).json({ message: error.message });
+    res.status(500).json({ message: 'Error updating goal', error: error.message });
   }
 });
 

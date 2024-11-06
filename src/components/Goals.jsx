@@ -8,6 +8,7 @@ function Goals() {
   const [targetMinutes, setTargetMinutes] = useState('');
   const [goals, setGoals] = useState([]);
   const [editingGoal, setEditingGoal] = useState(null);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     fetchGoals();
@@ -40,20 +41,35 @@ function Goals() {
     setEditingGoal(null);
     setGoalName('');
     setTargetMinutes('');
+    setError('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+
+    if (!goalName.trim()) {
+      setError('Goal name cannot be empty');
+      return;
+    }
+
+    const parsedMinutes = parseInt(targetMinutes);
+    if (isNaN(parsedMinutes) || parsedMinutes <= 0) {
+      setError('Target minutes must be a positive number');
+      return;
+    }
+
     try {
       if (editingGoal) {
-        await updateGoal(editingGoal._id, { name: goalName, targetMinutes: parseInt(targetMinutes) });
+        await updateGoal(editingGoal._id, { name: goalName.trim(), targetMinutes: parsedMinutes });
       } else {
-        await createGoal({ name: goalName, targetMinutes: parseInt(targetMinutes) });
+        await createGoal({ name: goalName.trim(), targetMinutes: parsedMinutes });
       }
       handleCloseModal();
       fetchGoals();
     } catch (error) {
       console.error('Error saving goal:', error);
+      setError('Failed to save goal. Please try again.');
     }
   };
 
@@ -77,6 +93,7 @@ function Goals() {
       <Modal show={showModal} handleClose={handleCloseModal}>
         <h2>{editingGoal ? 'Edit Goal' : 'Add New Goal'}</h2>
         <form onSubmit={handleSubmit}>
+          {error && <div className="alert alert-danger">{error}</div>}
           <div className="form-group">
             <label htmlFor="goalName">Goal Name</label>
             <input
