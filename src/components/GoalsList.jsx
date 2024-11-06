@@ -1,21 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 function GoalsList({ goals, onSaveProgress }) {
-  const [enteredMinutes, setEnteredMinutes] = useState({});
+  const [progressInputs, setProgressInputs] = useState({});
+
+  useEffect(() => {
+    const initialProgress = {};
+    goals.forEach(goal => {
+      initialProgress[goal._id] = goal.progress || '';
+    });
+    setProgressInputs(initialProgress);
+  }, [goals]);
 
   const handleInputChange = (goalId, value) => {
-    setEnteredMinutes(prev => ({
-      ...prev,
-      [goalId]: value
-    }));
+    console.log(`Updating progress for goal ${goalId}: ${value} minutes`);
+    setProgressInputs(prev => ({ ...prev, [goalId]: value }));
     onSaveProgress(goalId, value).catch(error => {
       console.error('Error saving progress:', error.response ? error.response.data : error);
+      console.error('Full error:', error);
     });
   };
 
   return (
     <div className="goals-list mt-4">
       <h3>Your Goals</h3>
+      {console.log('Current progressInputs:', progressInputs)}
       {goals.length === 0 ? (
         <p>No goals added yet. Add some goals to get started!</p>
       ) : (
@@ -27,14 +35,14 @@ function GoalsList({ goals, onSaveProgress }) {
                 <input
                   type="number"
                   min="0"
-                  value={enteredMinutes[goal._id] || ''}
+                  value={progressInputs[goal._id] || ''}
                   onChange={(e) => handleInputChange(goal._id, e.target.value)}
                   className="form-control d-inline-block mr-2"
                   style={{ width: '80px' }}
                 />
-                <span>{(enteredMinutes[goal._id] || 0)}/{goal.targetMinutes} minutes</span>
+                <span>{(progressInputs[goal._id] || 0)}/{goal.targetMinutes} minutes</span>
                 <button
-                  onClick={() => onSaveProgress(goal._id, enteredMinutes[goal._id])}
+                  onClick={() => onSaveProgress(goal._id, progressInputs[goal._id])}
                   className="btn btn-primary btn-sm ml-2"
                 >
                   Save

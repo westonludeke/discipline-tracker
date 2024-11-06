@@ -1,5 +1,6 @@
 import express from 'express';
 import Goal from '../models/Goal.js';
+import Progress from '../models/Progress.js'; // Importing the Progress model
 
 const router = express.Router();
 
@@ -33,7 +34,15 @@ router.get('/', async (req, res) => {
   console.log('Received GET request to /api/goals');
   try {
     const goals = await Goal.find();
-    res.json(goals);
+    const goalsWithProgress = await Promise.all(goals.map(async (goal) => {
+      const progress = await Progress.findOne({ goalId: goal._id }).sort({ date: -1 });
+      return {
+        ...goal.toObject(),
+        progress: progress ? progress.minutes : 0
+      };
+    }));
+    console.log('Sending goals with progress:', goalsWithProgress);
+    res.json(goalsWithProgress);
   } catch (error) {
     console.error('Error fetching goals:', error);
     res.status(500).json({ message: error.message });
@@ -85,17 +94,26 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-// New route for saving progress
+// Updated route for saving progress
 router.post('/progress', async (req, res) => {
   try {
-    const { goalId, minutes } = req.body;
+    const { goalId, minutes, date } = req.body;
+    console.log(`Saving progress: Goal ID ${goalId}, ${minutes} minutes, Date: ${date}`);
     const goal = await Goal.findById(goalId);
     if (!goal) {
       return res.status(404).json({ message: 'Goal not found' });
     }
-    // For now, we'll just log the progress. In a future task, we'll implement proper storage.
-    console.log(`Progress for goal ${goalId}: ${minutes} minutes`);
-    res.status(200).json({ message: 'Progress saved successfully' });
+
+    let progress = await Progress.findOne({ goalId, date });
+    if (progress) {
+      progress.minutes = minutes;
+      await progress.save();
+    } else {
+      progress = new Progress({ goalId, minutes, date });
+      await progress.save();
+    }
+    console.log('Saved progress:', progress);
+    res.status(200).json({ message: 'Progress saved successfully', progress });
   } catch (error) {
     console.error('Error saving progress:', error);
     res.status(500).json({ message: 'Error saving progress', error: error.message });
