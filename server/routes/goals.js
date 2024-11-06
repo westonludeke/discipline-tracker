@@ -43,4 +43,19 @@ router.put('/:id', async (req, res) => {
   }
 });
 
+router.delete('/:id', async (req, res) => {
+  console.log('Received DELETE request to /api/goals/:id', req.params.id);
+  try {
+    const { id } = req.params;
+    const deletedGoal = await Goal.findByIdAndDelete(id);
+    if (!deletedGoal) {
+      return res.status(404).json({ message: 'Goal not found' });
+    }
+    res.json({ message: 'Goal deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting goal:', error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
 export default router;

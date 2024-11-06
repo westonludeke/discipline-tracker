@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Modal from './Modal';
-import { createGoal, getGoals, updateGoal } from '../api/goals';
+import { createGoal, getGoals, updateGoal, deleteGoal } from '../api/goals';
 
 function Goals() {
   const [showModal, setShowModal] = useState(false);
@@ -57,6 +57,17 @@ function Goals() {
     }
   };
 
+  const handleDeleteGoal = async (goalId) => {
+    if (window.confirm('Are you sure you want to delete this goal?')) {
+      try {
+        await deleteGoal(goalId);
+        fetchGoals();
+      } catch (error) {
+        console.error('Error deleting goal:', error);
+      }
+    }
+  };
+
   return (
     <div className="container mt-5">
       <h1>Goals</h1>
@@ -98,9 +109,14 @@ function Goals() {
         {goals.map((goal) => (
           <li key={goal._id} className="list-group-item d-flex justify-content-between align-items-center">
             {goal.name} - {goal.targetMinutes} minutes
-            <button className="btn btn-sm btn-outline-primary" onClick={() => handleOpenModal(goal)}>
-              Edit
-            </button>
+            <div>
+              <button className="btn btn-sm btn-outline-primary mr-2" onClick={() => handleOpenModal(goal)}>
+                Edit
+              </button>
+              <button className="btn btn-sm btn-outline-danger" onClick={() => handleDeleteGoal(goal._id)}>
+                Delete
+              </button>
+            </div>
           </li>
         ))}
       </ul>

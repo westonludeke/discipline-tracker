@@ -34,3 +34,14 @@ export const updateGoal = async (id, goalData) => {
     throw error;
   }
 };
+
+export const deleteGoal = async (id) => {
+  try {
+    const response = await axios.delete(`${API_URL}/goals/${id}`);
+    console.log('Goal deleted successfully', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting goal:', error.response ? error.response.data : error);
+    throw error;
+  }
+};
