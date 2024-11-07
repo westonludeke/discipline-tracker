@@ -4,20 +4,31 @@ function GoalsList({ goals, onSaveProgress }) {
   const [progressInputs, setProgressInputs] = useState({});
 
   useEffect(() => {
-    const initialProgress = {};
-    goals.forEach(goal => {
-      initialProgress[goal._id] = goal.progress || '';
-    });
-    setProgressInputs(initialProgress);
+    const initialInputs = goals.reduce((acc, goal) => {
+      acc[goal._id] = goal.progress.toString();
+      return acc;
+    }, {});
+    setProgressInputs(initialInputs);
   }, [goals]);
 
-  const handleInputChange = (goalId, value) => {
-    console.log(`Updating progress for goal ${goalId}: ${value} minutes`);
-    setProgressInputs(prev => ({ ...prev, [goalId]: value }));
-    onSaveProgress(goalId, value).catch(error => {
-      console.error('Error saving progress:', error.response ? error.response.data : error);
-      console.error('Full error:', error);
-    });
+  useEffect(() => {
+    console.log('progressInputs updated:', progressInputs);
+  }, [progressInputs]);
+
+  const handleProgressChange = (goalId, value) => {
+    setProgressInputs(prevInputs => ({
+      ...prevInputs,
+      [goalId]: value
+    }));
+  };
+
+  const handleSave = (goalId) => {
+    onSaveProgress(goalId, progressInputs[goalId])
+      .then(() => console.log(`Progress for goal ${goalId} saved successfully`))
+      .catch(error => {
+        console.error('Error saving progress:', error.response ? error.response.data : error);
+        console.error('Full error:', error);
+      });
   };
 
   return (
@@ -36,13 +47,13 @@ function GoalsList({ goals, onSaveProgress }) {
                   type="number"
                   min="0"
                   value={progressInputs[goal._id] || ''}
-                  onChange={(e) => handleInputChange(goal._id, e.target.value)}
+                  onChange={(e) => handleProgressChange(goal._id, e.target.value)}
                   className="form-control d-inline-block mr-2"
                   style={{ width: '80px' }}
                 />
                 <span>{(progressInputs[goal._id] || 0)}/{goal.targetMinutes} minutes</span>
                 <button
-                  onClick={() => onSaveProgress(goal._id, progressInputs[goal._id])}
+                  onClick={() => handleSave(goal._id)}
                   className="btn btn-primary btn-sm ml-2"
                 >
                   Save

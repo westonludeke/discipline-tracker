@@ -35,13 +35,28 @@ router.get('/', async (req, res) => {
   try {
     const { date } = req.query;
     const goals = await Goal.find();
+    console.log('Found goals:', goals);
+
     const goalsWithProgress = await Promise.all(goals.map(async (goal) => {
-      const progress = date ? await Progress.findOne({ goalId: goal._id, date }) : await Progress.findOne({ goalId: goal._id }).sort({ date: -1 });
+      let progress = null;
+      if (date) {
+        const queryDate = new Date(date);
+        const startOfDay = new Date(Date.UTC(queryDate.getUTCFullYear(), queryDate.getUTCMonth(), queryDate.getUTCDate()));
+        const endOfDay = new Date(Date.UTC(queryDate.getUTCFullYear(), queryDate.getUTCMonth(), queryDate.getUTCDate(), 23, 59, 59, 999));
+
+        progress = await Progress.findOne({
+          goalId: goal._id,
+          date: { $gte: startOfDay, $lte: endOfDay }
+        }).sort({ date: -1 });
+      }
+
+      console.log(`Progress for goal ${goal._id} on date ${date}:`, progress);
       return {
         ...goal.toObject(),
         progress: progress ? progress.minutes : 0
       };
     }));
+
     console.log('Sending goals with progress for date:', date, goalsWithProgress);
     res.json(goalsWithProgress);
   } catch (error) {
@@ -95,7 +110,6 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-// Updated route for saving progress
 router.post('/progress', async (req, res) => {
   try {
     const { goalId, minutes, date } = req.body;
@@ -105,12 +119,15 @@ router.post('/progress', async (req, res) => {
       return res.status(404).json({ message: 'Goal not found' });
     }
 
-    let progress = await Progress.findOne({ goalId, date });
+    const utcDate = new Date(date);
+    utcDate.setUTCHours(0, 0, 0, 0);
+
+    let progress = await Progress.findOne({ goalId, date: utcDate });
     if (progress) {
       progress.minutes = minutes;
       await progress.save();
     } else {
-      progress = new Progress({ goalId, minutes, date });
+      progress = new Progress({ goalId, minutes, date: utcDate });
       await progress.save();
     }
     console.log('Saved progress:', progress);

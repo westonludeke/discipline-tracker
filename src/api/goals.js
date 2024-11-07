@@ -15,11 +15,13 @@ export const createGoal = async (goalData) => {
 
 export const getGoals = async (date) => {
   try {
-    const response = await axios.get(`${API_URL}/goals`, { params: { date } });
-    console.log('Goals fetched successfully for date:', date, response.data);
+    const url = date ? `${API_URL}/goals?date=${date}` : `${API_URL}/goals`;
+    console.log('Requesting goals from API:', url);
+    const response = await axios.get(url);
+    console.log('API response for goals:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Error fetching goals for date:', date, error.response ? error.response.data : error);
+    console.error('Error fetching goals:', error.response ? error.response.data : error);
     throw error;
   }
 };

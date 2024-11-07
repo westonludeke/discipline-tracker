@@ -14,21 +14,25 @@ function HomePage() {
 
   const fetchGoals = async (date) => {
     try {
+      console.log('Fetching goals for date:', date.format('YYYY-MM-DD'));
       const fetchedGoals = await getGoals(date.format('YYYY-MM-DD'));
       console.log('Fetched goals:', fetchedGoals);
       setGoals(fetchedGoals);
     } catch (error) {
       console.error('Error fetching goals:', error);
+      console.error('Full error:', error);
     }
   };
 
   const handleSaveProgress = async (goalId, minutes) => {
     try {
+      console.log('Saving progress:', { goalId, minutes, date: currentDate.format('YYYY-MM-DD') });
       await saveProgress(goalId, minutes, currentDate.toISOString());
       console.log('Progress saved successfully');
-      fetchGoals(currentDate); // Refresh goals after saving progress
+      fetchGoals(currentDate); // Only fetch goals after successful save
     } catch (error) {
       console.error('Error saving progress:', error);
+      console.error('Full error:', error);
     }
   };
 
