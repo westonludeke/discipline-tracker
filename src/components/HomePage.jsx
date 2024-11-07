@@ -31,11 +31,31 @@ function HomePage() {
     }
   };
 
+  const handleDateChange = (direction) => {
+    setCurrentDate(prevDate => {
+      return direction === 'forward' ? prevDate.add(1, 'day') : prevDate.subtract(1, 'day');
+    });
+  };
+
   return (
     <div className="container">
       <header className="text-center my-4">
         <h1>Discipline Tracker</h1>
-        <h2 className="text-muted">{currentDate.format('dddd, MMMM DD, YYYY')}</h2>
+        <div className="d-flex justify-content-center align-items-center">
+          <button
+            className="btn btn-outline-secondary mr-2"
+            onClick={() => handleDateChange('back')}
+          >
+            &lt;
+          </button>
+          <h2 className="text-muted mb-0">{currentDate.format('dddd, MMMM DD, YYYY')}</h2>
+          <button
+            className="btn btn-outline-secondary ml-2"
+            onClick={() => handleDateChange('forward')}
+          >
+            &gt;
+          </button>
+        </div>
       </header>
       <GoalsList goals={goals} onSaveProgress={handleSaveProgress} />
     </div>
