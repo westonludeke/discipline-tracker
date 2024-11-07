@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-function GoalsList({ goals, onSaveProgress }) {
+function GoalsList({ goals, onSaveProgress, date }) {
   const [progressInputs, setProgressInputs] = useState({});
 
   useEffect(() => {
@@ -11,10 +11,6 @@ function GoalsList({ goals, onSaveProgress }) {
     setProgressInputs(initialInputs);
   }, [goals]);
 
-  useEffect(() => {
-    console.log('progressInputs updated:', progressInputs);
-  }, [progressInputs]);
-
   const handleProgressChange = (goalId, value) => {
     setProgressInputs(prevInputs => ({
       ...prevInputs,
@@ -23,8 +19,8 @@ function GoalsList({ goals, onSaveProgress }) {
   };
 
   const handleSave = (goalId) => {
-    onSaveProgress(goalId, progressInputs[goalId])
-      .then(() => console.log(`Progress for goal ${goalId} saved successfully`))
+    onSaveProgress(goalId, progressInputs[goalId], date)
+      .then(() => console.log(`Progress for goal ${goalId} on ${date} saved successfully`))
       .catch(error => {
         console.error('Error saving progress:', error.response ? error.response.data : error);
         console.error('Full error:', error);
@@ -34,7 +30,6 @@ function GoalsList({ goals, onSaveProgress }) {
   return (
     <div className="goals-list mt-4">
       <h3>Your Goals</h3>
-      {console.log('Current progressInputs:', progressInputs)}
       {goals.length === 0 ? (
         <p>No goals added yet. Add some goals to get started!</p>
       ) : (

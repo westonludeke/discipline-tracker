@@ -113,9 +113,10 @@ router.delete('/:id', async (req, res) => {
 router.post('/progress', async (req, res) => {
   try {
     const { goalId, minutes, date } = req.body;
-    console.log(`Saving progress: Goal ID ${goalId}, ${minutes} minutes, Date: ${date}`);
+    console.log(`Attempting to save or update progress: Goal ID ${goalId}, ${minutes} minutes, Date: ${date}`);
     const goal = await Goal.findById(goalId);
     if (!goal) {
+      console.error(`Goal not found for ID: ${goalId}`);
       return res.status(404).json({ message: 'Goal not found' });
     }
 
@@ -126,14 +127,15 @@ router.post('/progress', async (req, res) => {
     if (progress) {
       progress.minutes = minutes;
       await progress.save();
+      console.log(`Updated existing progress for Goal ID ${goalId} on ${date}:`, progress);
     } else {
       progress = new Progress({ goalId, minutes, date: utcDate });
       await progress.save();
+      console.log(`Saved new progress for Goal ID ${goalId} on ${date}:`, progress);
     }
-    console.log('Saved progress:', progress);
     res.status(200).json({ message: 'Progress saved successfully', progress });
   } catch (error) {
-    console.error('Error saving progress:', error);
+    console.error('Error saving or updating progress:', error);
     res.status(500).json({ message: 'Error saving progress', error: error.message });
   }
 });
