@@ -31,21 +31,22 @@ router.post('/', async (req, res) => {
 });
 
 router.get('/', async (req, res) => {
-  console.log('Received GET request to /api/goals');
+  console.log('Received GET request to /api/goals with date:', req.query.date);
   try {
+    const { date } = req.query;
     const goals = await Goal.find();
     const goalsWithProgress = await Promise.all(goals.map(async (goal) => {
-      const progress = await Progress.findOne({ goalId: goal._id }).sort({ date: -1 });
+      const progress = date ? await Progress.findOne({ goalId: goal._id, date }) : await Progress.findOne({ goalId: goal._id }).sort({ date: -1 });
       return {
         ...goal.toObject(),
         progress: progress ? progress.minutes : 0
       };
     }));
-    console.log('Sending goals with progress:', goalsWithProgress);
+    console.log('Sending goals with progress for date:', date, goalsWithProgress);
     res.json(goalsWithProgress);
   } catch (error) {
-    console.error('Error fetching goals:', error);
-    res.status(500).json({ message: error.message });
+    console.error('Error fetching goals for date:', req.query.date, error);
+    res.status(500).json({ message: 'Error fetching goals', error: error.message });
   }
 });
 

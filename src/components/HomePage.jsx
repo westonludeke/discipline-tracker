@@ -9,12 +9,12 @@ function HomePage() {
   const [currentDate, setCurrentDate] = useState(dayjs());
 
   useEffect(() => {
-    fetchGoals();
-  }, []);
+    fetchGoals(currentDate);
+  }, [currentDate]);
 
-  const fetchGoals = async () => {
+  const fetchGoals = async (date) => {
     try {
-      const fetchedGoals = await getGoals();
+      const fetchedGoals = await getGoals(date.format('YYYY-MM-DD'));
       console.log('Fetched goals:', fetchedGoals);
       setGoals(fetchedGoals);
     } catch (error) {
@@ -26,6 +26,7 @@ function HomePage() {
     try {
       await saveProgress(goalId, minutes, currentDate.toISOString());
       console.log('Progress saved successfully');
+      fetchGoals(currentDate); // Refresh goals after saving progress
     } catch (error) {
       console.error('Error saving progress:', error);
     }
@@ -33,7 +34,8 @@ function HomePage() {
 
   const handleDateChange = (direction) => {
     setCurrentDate(prevDate => {
-      return direction === 'forward' ? prevDate.add(1, 'day') : prevDate.subtract(1, 'day');
+      const newDate = direction === 'forward' ? prevDate.add(1, 'day') : prevDate.subtract(1, 'day');
+      return newDate.isAfter(dayjs()) ? dayjs() : newDate;
     });
   };
 
@@ -52,6 +54,7 @@ function HomePage() {
           <button
             className="btn btn-outline-secondary ml-2"
             onClick={() => handleDateChange('forward')}
+            disabled={currentDate.isSame(dayjs(), 'day')}
           >
             &gt;
           </button>
