@@ -10,17 +10,23 @@ function StreaksPage() {
 
   const fetchStreaks = async () => {
     try {
+      console.log('Fetching goals from API');
       const response = await axios.get('http://localhost:3000/api/goals');
+      console.log('Goals fetched:', response.data);
+
       const goalsWithStreaks = await Promise.all(response.data.map(async (goal) => {
+        console.log(`Fetching streak for goal: ${goal.name} (${goal._id})`);
         const streakResponse = await axios.get(`http://localhost:3000/api/goals/${goal._id}/streak`);
+        console.log(`Streak response for ${goal.name}:`, streakResponse.data);
         return {
           ...goal,
           currentStreak: streakResponse.data.currentStreak
         };
       }));
+      console.log('Goals with streaks:', goalsWithStreaks);
       setStreaks(goalsWithStreaks);
     } catch (error) {
-      console.error('Error fetching streaks:', error);
+      console.error('Error fetching streaks:', error.response ? error.response.data : error);
     }
   };
 
@@ -31,7 +37,7 @@ function StreaksPage() {
         {streaks.map((goal) => (
           <li key={goal._id} className="list-group-item d-flex justify-content-between align-items-center">
             {goal.name}
-            <span className="badge badge-primary badge-pill">
+            <span className="badge bg-primary text-dark">
               Current streak: {goal.currentStreak} days
             </span>
           </li>
