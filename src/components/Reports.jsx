@@ -1,28 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { getHistoricalData } from '../api/progress';
-import HistoricalLog from './HistoricalLog';
+import { getChartData } from '../api/progress';
+import MonthlyProgressTable from './MonthlyProgressTable';
 
 function Reports() {
-  const [historicalData, setHistoricalData] = useState([]);
+  const [chartData, setChartData] = useState([]);
 
   useEffect(() => {
-    const fetchHistoricalData = async () => {
+    const fetchData = async () => {
       try {
-        const data = await getHistoricalData();
-        setHistoricalData(data);
+        const data = await getChartData();
+        console.log('Fetched chart data:', data); // Add this log
+        setChartData(data);
       } catch (error) {
-        console.error('Error fetching historical data:', error);
+        console.error('Error fetching data:', error);
         console.error('Full error:', error);
       }
     };
 
-    fetchHistoricalData();
+    fetchData();
   }, []);
 
   return (
     <div className="container mt-5">
       <h1>Reports</h1>
-      <HistoricalLog data={historicalData} />
+      {chartData.map(goalData => (
+        <MonthlyProgressTable
+          key={goalData.goalId}
+          goalName={goalData.goalName}
+          monthlyData={goalData.monthlyData}
+        />
+      ))}
     </div>
   );
 }

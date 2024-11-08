@@ -146,37 +146,56 @@ router.post('/progress', async (req, res) => {
   }
 });
 
-router.get('/historical', async (req, res) => {
+router.get('/chart-data', async (req, res) => {
   try {
     const goals = await Goal.find();
-    const historicalData = await Promise.all(goals.map(async (goal) => {
-      const progress = await Progress.find({ goalId: goal._id }).sort({ date: 1 });
+    const currentYear = new Date().getFullYear();
 
-      const weeklyData = {};
-      const monthlyData = {};
-
-      progress.forEach(entry => {
-        const date = dayjs(entry.date);
-        const week = `${date.year()}-W${date.isoWeek()}`;
-        const month = date.format('YYYY-MM');
-
-        weeklyData[week] = (weeklyData[week] || 0) + entry.minutes;
-        monthlyData[month] = (monthlyData[month] || 0) + entry.minutes;
-      });
+    const chartData = await Promise.all(goals.map(async (goal) => {
+      const monthlyData = await Progress.aggregate([
+        {
+          $match: {
+            goalId: goal._id,
+            date: {
+              $gte: new Date(currentYear, 0, 1),
+              $lt: new Date(currentYear + 1, 0, 1)
+            }
+          }
+        },
+        {
+          $group: {
+            _id: { $month: "$date" },
+            totalMinutes: { $sum: "$minutes" }
+          }
+        },
+        {
+          $sort: { _id: 1 }
+        }
+      ]);
 
       return {
         goalId: goal._id,
         goalName: goal.name,
-        weekly: Object.entries(weeklyData).map(([week, minutes]) => ({ week, minutes })),
-        monthly: Object.entries(monthlyData).map(([month, minutes]) => ({ month, minutes }))
+        monthlyData: monthlyData.map(item => ({
+          month: item._id,
+          totalMinutes: item.totalMinutes,
+          formattedTime: formatMinutesToHHMM(item.totalMinutes)
+        }))
       };
     }));
 
-    res.json(historicalData);
+    console.log('Chart data being sent to client:', JSON.stringify(chartData)); // Added log as per instructions
+    res.json(chartData);
   } catch (error) {
-    console.error('Error fetching historical data:', error);
-    res.status(500).json({ message: 'Error fetching historical data', error: error.message });
+    console.error('Error fetching chart data:', error);
+    res.status(500).json({ message: 'Error fetching chart data' });
   }
 });
+
+function formatMinutesToHHMM(minutes) {
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+  return `${hours.toString().padStart(2, '0')}:${remainingMinutes.toString().padStart(2, '0')}`;
+}
 
 export default router;

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3000/api'; // INPUT_REQUIRED {API_URL: The URL of your API}
+const API_URL = 'http://localhost:3000/api';
 
 export const saveProgress = async (goalId, minutes, date) => {
   try {
@@ -21,6 +21,18 @@ export const getHistoricalData = async () => {
     return response.data;
   } catch (error) {
     console.error('Error fetching historical data:', error);
+    console.error('Full error:', error);
+    throw error;
+  }
+};
+
+export const getChartData = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/goals/chart-data`);
+    console.log('Raw chart data from API:', response.data); // Updated log message as per instructions
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching chart data:', error);
     console.error('Full error:', error);
     throw error;
   }
