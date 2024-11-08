@@ -10,6 +10,10 @@ const goalSchema = new mongoose.Schema({
     required: true,
     min: 1,
   },
+  currentStreak: {
+    type: Number,
+    default: 0,
+  },
 }, { timestamps: true });
 
 export default mongoose.model('Goal', goalSchema);

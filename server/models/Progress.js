@@ -15,6 +15,10 @@ const progressSchema = new mongoose.Schema({
     required: true,
     min: 0,
   },
+  streakUpdated: {
+    type: Date,
+    default: null,
+  },
 }, { timestamps: true });
 
 export default mongoose.model('Progress', progressSchema);

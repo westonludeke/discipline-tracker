@@ -10,6 +10,7 @@ function Navigation() {
           <Link className="nav-item nav-link" to="/">Home</Link>
           <Link className="nav-item nav-link" to="/goals">Goals</Link>
           <Link className="nav-item nav-link" to="/reports">Reports</Link>
+          <Link className="nav-item nav-link" to="/streaks">Streaks</Link>
         </div>
       </div>
     </nav>

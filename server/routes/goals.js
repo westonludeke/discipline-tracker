@@ -1,12 +1,7 @@
 import express from 'express';
 import Goal from '../models/Goal.js';
-import Progress from '../models/Progress.js'; // Importing the Progress model
+import Progress from '../models/Progress.js';
 import dayjs from 'dayjs';
-import weekOfYear from 'dayjs/plugin/weekOfYear.js';
-import isoWeek from 'dayjs/plugin/isoWeek.js';
-
-dayjs.extend(weekOfYear);
-dayjs.extend(isoWeek);
 
 const router = express.Router();
 
@@ -129,7 +124,7 @@ router.delete('/:id', async (req, res) => {
 router.post('/progress', async (req, res) => {
   try {
     const { goalId, minutes, date } = req.body;
-    console.log(`Attempting to save or update progress: Goal ID ${goalId}, ${minutes} minutes, Date: ${date}`);
+    console.log(`Saving progress: Goal ID ${goalId}, ${minutes} minutes, Date: ${date}`);
     const goal = await Goal.findById(goalId);
     if (!goal) {
       console.error(`Goal not found for ID: ${goalId}`);
@@ -142,17 +137,61 @@ router.post('/progress', async (req, res) => {
     let progress = await Progress.findOne({ goalId, date: utcDate });
     if (progress) {
       progress.minutes = minutes;
+      progress.streakUpdated = new Date();
       await progress.save();
       console.log(`Updated existing progress for Goal ID ${goalId} on ${date}:`, progress);
     } else {
-      progress = new Progress({ goalId, minutes, date: utcDate });
+      progress = new Progress({ goalId, minutes, date: utcDate, streakUpdated: new Date() });
       await progress.save();
       console.log(`Saved new progress for Goal ID ${goalId} on ${date}:`, progress);
     }
+
+    await updateStreak(goalId, utcDate);
+
     res.status(200).json({ message: 'Progress saved successfully', progress });
   } catch (error) {
     console.error('Error saving or updating progress:', error);
     res.status(500).json({ message: 'Error saving progress', error: error.message });
+  }
+});
+
+// Add this new function to calculate and update streak
+const updateStreak = async (goalId, date) => {
+  const goal = await Goal.findById(goalId);
+  if (!goal) {
+    console.log(`Goal not found for ID: ${goalId}`);
+    return;
+  }
+
+  console.log(`Updating streak for Goal ID ${goalId}, Current streak: ${goal.currentStreak}`);
+  const yesterday = dayjs(date).subtract(1, 'day').toDate();
+  const todayProgress = await Progress.findOne({ goalId, date: { $gte: date, $lt: dayjs(date).add(1, 'day').toDate() } });
+  const yesterdayProgress = await Progress.findOne({ goalId, date: { $gte: yesterday, $lt: date } });
+
+  if (todayProgress && todayProgress.minutes > 0) {
+    if (yesterdayProgress && yesterdayProgress.minutes > 0) {
+      goal.currentStreak += 1;
+    } else {
+      goal.currentStreak = 1;
+    }
+  } else {
+    goal.currentStreak = 0;
+  }
+
+  console.log(`Updated streak for Goal ID ${goalId}, New streak: ${goal.currentStreak}`);
+  await goal.save();
+};
+
+router.get('/:id/streak', async (req, res) => {
+  try {
+    const goal = await Goal.findById(req.params.id);
+    if (!goal) {
+      return res.status(404).json({ message: 'Goal not found' });
+    }
+    res.json({ currentStreak: goal.currentStreak });
+  } catch (error) {
+    console.error('Error fetching streak:', error);
+    res.status(500).json({ message: 'Error fetching streak', error: error.message });
   }
 });
 

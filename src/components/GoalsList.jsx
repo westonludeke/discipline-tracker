@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 function GoalsList({ goals, onSaveProgress, date }) {
   const [progressInputs, setProgressInputs] = useState({});
+  const [streaks, setStreaks] = useState({});
 
   useEffect(() => {
     const initialInputs = goals.reduce((acc, goal) => {
@@ -9,7 +11,23 @@ function GoalsList({ goals, onSaveProgress, date }) {
       return acc;
     }, {});
     setProgressInputs(initialInputs);
+    fetchStreaks();
   }, [goals]);
+
+  const fetchStreaks = async () => {
+    const streakData = {};
+    for (const goal of goals) {
+      try {
+        const response = await axios.get(`http://localhost:3000/api/goals/${goal._id}/streak`);
+        console.log(`Fetched streak for goal ${goal.name}: ${response.data.currentStreak}`);
+        streakData[goal._id] = response.data.currentStreak;
+      } catch (error) {
+        console.error(`Error fetching streak for goal ${goal.name}:`, error);
+        streakData[goal._id] = 0;
+      }
+    }
+    setStreaks(streakData);
+  };
 
   const handleProgressChange = (goalId, value) => {
     setProgressInputs(prevInputs => ({
@@ -18,13 +36,21 @@ function GoalsList({ goals, onSaveProgress, date }) {
     }));
   };
 
-  const handleSave = (goalId) => {
-    onSaveProgress(goalId, progressInputs[goalId], date)
-      .then(() => console.log(`Progress for goal ${goalId} on ${date} saved successfully`))
-      .catch(error => {
-        console.error('Error saving progress:', error.response ? error.response.data : error);
-        console.error('Full error:', error);
-      });
+  const handleSave = async (goalId) => {
+    try {
+      await onSaveProgress(goalId, progressInputs[goalId], date);
+      console.log(`Progress for goal ${goalId} on ${date} saved successfully`);
+      // Fetch updated streak after saving progress
+      const response = await axios.get(`http://localhost:3000/api/goals/${goalId}/streak`);
+      console.log(`Updated streak for goal ${goalId}: ${response.data.currentStreak}`);
+      setStreaks(prevStreaks => ({
+        ...prevStreaks,
+        [goalId]: response.data.currentStreak
+      }));
+    } catch (error) {
+      console.error('Error saving progress:', error.response ? error.response.data : error);
+      console.error('Full error:', error);
+    }
   };
 
   return (
@@ -53,6 +79,7 @@ function GoalsList({ goals, onSaveProgress, date }) {
                 >
                   Save
                 </button>
+                <span className="ml-2 badge badge-info">Streak: {streaks[goal._id] || 0} days</span>
               </div>
             </li>
           ))}
