@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function StreaksPage() {
   const [streaks, setStreaks] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchStreaks();
@@ -30,12 +32,21 @@ function StreaksPage() {
     }
   };
 
+  const handleGoalClick = (goalId) => {
+    navigate(`/streak-calendar/${goalId}`);
+  };
+
   return (
     <div className="container mt-5">
       <h1>Streaks</h1>
       <ul className="list-group">
         {streaks.map((goal) => (
-          <li key={goal._id} className="list-group-item d-flex justify-content-between align-items-center">
+          <li
+            key={goal._id}
+            className="list-group-item d-flex justify-content-between align-items-center"
+            onClick={() => handleGoalClick(goal._id)}
+            style={{ cursor: 'pointer' }}
+          >
             {goal.name}
             <span className="badge bg-primary text-dark">
               Current streak: {goal.currentStreak} days

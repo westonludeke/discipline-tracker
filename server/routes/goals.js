@@ -182,6 +182,19 @@ const updateStreak = async (goalId, date) => {
   await goal.save();
 };
 
+router.get('/:id', async (req, res) => {
+  try {
+    const goal = await Goal.findById(req.params.id);
+    if (!goal) {
+      return res.status(404).json({ message: 'Goal not found' });
+    }
+    res.json(goal);
+  } catch (error) {
+    console.error('Error fetching goal:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 router.get('/:id/streak', async (req, res) => {
   try {
     console.log(`Fetching streak for goal ID: ${req.params.id}`);
