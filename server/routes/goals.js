@@ -10,6 +10,16 @@ dayjs.extend(isoWeek);
 
 const router = express.Router();
 
+// Add this function at the top of the file
+const calculateYearlyTotal = (monthlyData) => {
+  return monthlyData.reduce((total, month) => {
+    return {
+      totalMinutes: total.totalMinutes + month.totalMinutes,
+      formattedTime: formatMinutesToHHMM(total.totalMinutes + month.totalMinutes)
+    };
+  }, { totalMinutes: 0, formattedTime: '00:00' });
+};
+
 router.post('/', async (req, res) => {
   console.log('Received POST request to /api/goals:', req.body);
   try {
@@ -171,7 +181,9 @@ router.get('/chart-data', async (req, res) => {
         {
           $sort: { _id: 1 }
         }
-      ]);
+      ]).exec();
+
+      const yearlyTotal = calculateYearlyTotal(monthlyData);
 
       return {
         goalId: goal._id,
@@ -180,11 +192,11 @@ router.get('/chart-data', async (req, res) => {
           month: item._id,
           totalMinutes: item.totalMinutes,
           formattedTime: formatMinutesToHHMM(item.totalMinutes)
-        }))
+        })),
+        yearlyTotal
       };
     }));
 
-    console.log('Chart data being sent to client:', JSON.stringify(chartData)); // Added log as per instructions
     res.json(chartData);
   } catch (error) {
     console.error('Error fetching chart data:', error);

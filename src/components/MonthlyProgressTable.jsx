@@ -5,7 +5,7 @@ const monthNames = [
   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
 ];
 
-function MonthlyProgressTable({ goalName, monthlyData }) {
+function MonthlyProgressTable({ goalName, monthlyData, yearlyTotal }) {
   const currentYear = new Date().getFullYear();
 
   return (
@@ -30,6 +30,11 @@ function MonthlyProgressTable({ goalName, monthlyData }) {
               </tr>
             );
           })}
+          <tr className="table-active">
+            <td><strong>Totals</strong></td>
+            <td><strong>{yearlyTotal.totalMinutes}</strong></td>
+            <td><strong>{yearlyTotal.formattedTime}</strong></td>
+          </tr>
         </tbody>
       </table>
     </div>
