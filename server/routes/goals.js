@@ -1,6 +1,12 @@
 import express from 'express';
 import Goal from '../models/Goal.js';
 import Progress from '../models/Progress.js'; // Importing the Progress model
+import dayjs from 'dayjs';
+import weekOfYear from 'dayjs/plugin/weekOfYear.js';
+import isoWeek from 'dayjs/plugin/isoWeek.js';
+
+dayjs.extend(weekOfYear);
+dayjs.extend(isoWeek);
 
 const router = express.Router();
 
@@ -137,6 +143,39 @@ router.post('/progress', async (req, res) => {
   } catch (error) {
     console.error('Error saving or updating progress:', error);
     res.status(500).json({ message: 'Error saving progress', error: error.message });
+  }
+});
+
+router.get('/historical', async (req, res) => {
+  try {
+    const goals = await Goal.find();
+    const historicalData = await Promise.all(goals.map(async (goal) => {
+      const progress = await Progress.find({ goalId: goal._id }).sort({ date: 1 });
+
+      const weeklyData = {};
+      const monthlyData = {};
+
+      progress.forEach(entry => {
+        const date = dayjs(entry.date);
+        const week = `${date.year()}-W${date.isoWeek()}`;
+        const month = date.format('YYYY-MM');
+
+        weeklyData[week] = (weeklyData[week] || 0) + entry.minutes;
+        monthlyData[month] = (monthlyData[month] || 0) + entry.minutes;
+      });
+
+      return {
+        goalId: goal._id,
+        goalName: goal.name,
+        weekly: Object.entries(weeklyData).map(([week, minutes]) => ({ week, minutes })),
+        monthly: Object.entries(monthlyData).map(([month, minutes]) => ({ month, minutes }))
+      };
+    }));
+
+    res.json(historicalData);
+  } catch (error) {
+    console.error('Error fetching historical data:', error);
+    res.status(500).json({ message: 'Error fetching historical data', error: error.message });
   }
 });
 
