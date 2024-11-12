@@ -19,10 +19,9 @@ function GoalsList({ goals, onSaveProgress, date }) {
     for (const goal of goals) {
       try {
         const response = await axios.get(`http://localhost:3000/api/goals/${goal._id}/streak`);
-        console.log(`Fetched streak for goal ${goal.name}: ${response.data.currentStreak}`);
         streakData[goal._id] = response.data.currentStreak;
       } catch (error) {
-        console.error(`Error fetching streak for goal ${goal.name}:`, error);
+        console.error(`Error fetching streak for goal ${goal._id}:`, error);
         streakData[goal._id] = 0;
       }
     }
@@ -38,11 +37,12 @@ function GoalsList({ goals, onSaveProgress, date }) {
 
   const handleSave = async (goalId) => {
     try {
+      console.log(`Saving progress for goal ${goalId} on date ${date}`);
+      console.log(`Progress value: ${progressInputs[goalId]}`);
       await onSaveProgress(goalId, progressInputs[goalId], date);
       console.log(`Progress for goal ${goalId} on ${date} saved successfully`);
       // Fetch updated streak after saving progress
       const response = await axios.get(`http://localhost:3000/api/goals/${goalId}/streak`);
-      console.log(`Updated streak for goal ${goalId}: ${response.data.currentStreak}`);
       setStreaks(prevStreaks => ({
         ...prevStreaks,
         [goalId]: response.data.currentStreak

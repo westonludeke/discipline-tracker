@@ -5,15 +5,39 @@ import dayjs from 'dayjs';
 
 const router = express.Router();
 
-// Add this function at the top of the file
-const calculateYearlyTotal = (monthlyData) => {
-  return monthlyData.reduce((total, month) => {
-    return {
-      totalMinutes: total.totalMinutes + month.totalMinutes,
-      formattedTime: formatMinutesToHHMM(total.totalMinutes + month.totalMinutes)
-    };
-  }, { totalMinutes: 0, formattedTime: '00:00' });
+// Add this new function to calculate and update streak
+const updateStreak = async (goalId, date) => {
+  const goal = await Goal.findById(goalId);
+  if (!goal) return;
+
+  const yesterday = dayjs(date).subtract(1, 'day').toDate();
+  const todayProgress = await Progress.findOne({ goalId, date: { $gte: date, $lt: dayjs(date).add(1, 'day').toDate() } });
+  const yesterdayProgress = await Progress.findOne({ goalId, date: { $gte: yesterday, $lt: date } });
+
+  if (todayProgress && todayProgress.minutes > 0) {
+    if (yesterdayProgress && yesterdayProgress.minutes > 0) {
+      goal.currentStreak += 1;
+    } else {
+      goal.currentStreak = 1;
+    }
+  } else {
+    goal.currentStreak = 0;
+  }
+
+  await goal.save();
 };
+
+function calculateYearlyTotal(monthlyData) {
+  const totalMinutes = monthlyData.reduce((sum, month) => sum + month.totalMinutes, 0);
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+
+  return {
+    totalMinutes,
+    formattedTime
+  };
+}
 
 router.post('/', async (req, res) => {
   console.log('Received POST request to /api/goals:', req.body);
@@ -124,15 +148,13 @@ router.delete('/:id', async (req, res) => {
 router.post('/progress', async (req, res) => {
   try {
     const { goalId, minutes, date } = req.body;
-    console.log(`Saving progress: Goal ID ${goalId}, ${minutes} minutes, Date: ${date}`);
-    const goal = await Goal.findById(goalId);
-    if (!goal) {
-      console.error(`Goal not found for ID: ${goalId}`);
-      return res.status(404).json({ message: 'Goal not found' });
-    }
+    console.log(`Received progress data: Goal ID ${goalId}, ${minutes} minutes, Date: ${date}`);
+    console.log(`Date type: ${typeof date}, Date value: ${date}`);
 
     const utcDate = new Date(date);
+    console.log(`Converted UTC Date: ${utcDate}`);
     utcDate.setUTCHours(0, 0, 0, 0);
+    console.log(`UTC Date after setting hours to 0: ${utcDate}`);
 
     let progress = await Progress.findOne({ goalId, date: utcDate });
     if (progress) {
@@ -155,55 +177,12 @@ router.post('/progress', async (req, res) => {
   }
 });
 
-// Add this new function to calculate and update streak
-const updateStreak = async (goalId, date) => {
-  const goal = await Goal.findById(goalId);
-  if (!goal) {
-    console.log(`Goal not found for ID: ${goalId}`);
-    return;
-  }
-
-  console.log(`Updating streak for Goal ID ${goalId}, Current streak: ${goal.currentStreak}`);
-  const yesterday = dayjs(date).subtract(1, 'day').toDate();
-  const todayProgress = await Progress.findOne({ goalId, date: { $gte: date, $lt: dayjs(date).add(1, 'day').toDate() } });
-  const yesterdayProgress = await Progress.findOne({ goalId, date: { $gte: yesterday, $lt: date } });
-
-  if (todayProgress && todayProgress.minutes > 0) {
-    if (yesterdayProgress && yesterdayProgress.minutes > 0) {
-      goal.currentStreak += 1;
-    } else {
-      goal.currentStreak = 1;
-    }
-  } else {
-    goal.currentStreak = 0;
-  }
-
-  console.log(`Updated streak for Goal ID ${goalId}, New streak: ${goal.currentStreak}`);
-  await goal.save();
-};
-
-router.get('/:id', async (req, res) => {
-  try {
-    const goal = await Goal.findById(req.params.id);
-    if (!goal) {
-      return res.status(404).json({ message: 'Goal not found' });
-    }
-    res.json(goal);
-  } catch (error) {
-    console.error('Error fetching goal:', error);
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
 router.get('/:id/streak', async (req, res) => {
   try {
-    console.log(`Fetching streak for goal ID: ${req.params.id}`);
     const goal = await Goal.findById(req.params.id);
     if (!goal) {
-      console.log(`Goal not found for ID: ${req.params.id}`);
       return res.status(404).json({ message: 'Goal not found' });
     }
-    console.log(`Streak for goal ${goal.name}: ${goal.currentStreak}`);
     res.json({ currentStreak: goal.currentStreak });
   } catch (error) {
     console.error('Error fetching streak:', error);
@@ -255,7 +234,7 @@ router.get('/chart-data', async (req, res) => {
     res.json(chartData);
   } catch (error) {
     console.error('Error fetching chart data:', error);
-    res.status(500).json({ message: 'Error fetching chart data' });
+    res.status(500).json({ message: 'Error fetching chart data', error: error.message });
   }
 });
 
