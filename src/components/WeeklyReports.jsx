@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 const WeeklyReports = () => {
   const [weeksData, setWeeksData] = useState([]);
   const [currentWeekIndex, setCurrentWeekIndex] = useState(0);
-  const numberOfWeeksToShow = 4; // You can adjust this number as needed
+  const numberOfWeeksToShow = 4;
 
   useEffect(() => {
     fetchMultipleWeeksData();
@@ -41,10 +41,27 @@ const WeeklyReports = () => {
     }
   };
 
+  const calculateTotals = (weekData) => {
+    const totals = {};
+    weekData.forEach(day => {
+      Object.keys(day).forEach(key => {
+        if (key !== 'date') {
+          if (!totals[key]) {
+            totals[key] = { minutes: 0, target: 0 };
+          }
+          totals[key].minutes += day[key].minutes;
+          totals[key].target += day[key].target;
+        }
+      });
+    });
+    return totals;
+  };
+
   const renderTable = (weekData) => {
     if (!weekData || weekData.data.length === 0) return <p>No data available for this week.</p>;
 
     const goals = Object.keys(weekData.data[0]).filter(key => key !== 'date');
+    const totals = calculateTotals(weekData.data);
 
     return (
       <table className="table table-bordered">
@@ -71,6 +88,15 @@ const WeeklyReports = () => {
               ))}
             </tr>
           ))}
+          <tr className="table-active">
+            <td><strong>Totals</strong></td>
+            {goals.map(goal => (
+              <React.Fragment key={goal}>
+                <td><strong>{totals[goal]?.minutes || 0}</strong></td>
+                <td><strong>{totals[goal]?.target || 0}</strong></td>
+              </React.Fragment>
+            ))}
+          </tr>
         </tbody>
       </table>
     );
