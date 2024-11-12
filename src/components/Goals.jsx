@@ -125,7 +125,10 @@ function Goals() {
       <ul className="list-group mt-3">
         {goals.map((goal) => (
           <li key={goal._id} className="list-group-item d-flex justify-content-between align-items-center">
-            {goal.name} - {goal.targetMinutes} minutes
+            <div>
+              {goal.name} - {goal.targetMinutes} minutes
+              <span className="ml-2 badge bg-secondary">Streak: {goal.currentStreak} days</span>
+            </div>
             <div>
               <button className="btn btn-sm btn-outline-primary mr-2" onClick={() => handleOpenModal(goal)}>
                 Edit

@@ -4,8 +4,9 @@ const API_URL = 'http://localhost:3000/api';
 
 export const saveProgress = async (goalId, minutes, date) => {
   try {
+    console.log(`Saving progress: Goal ID ${goalId}, ${minutes} minutes, Date: ${date}`);
     const response = await axios.post(`${API_URL}/goals/progress`, { goalId, minutes, date });
-    console.log(`Progress for goal ${goalId}: ${minutes} minutes on ${date} saved successfully`);
+    console.log('Progress saved successfully:', response.data);
     return response.data;
   } catch (error) {
     console.error('Error saving progress:', error.response ? error.response.data : error);

@@ -7,12 +7,19 @@ const router = express.Router();
 
 // Add this new function to calculate and update streak
 const updateStreak = async (goalId, date) => {
+  console.log(`Updating streak for goal ${goalId} on date ${date}`);
   const goal = await Goal.findById(goalId);
-  if (!goal) return;
+  if (!goal) {
+    console.log(`Goal ${goalId} not found`);
+    return;
+  }
 
   const yesterday = dayjs(date).subtract(1, 'day').toDate();
   const todayProgress = await Progress.findOne({ goalId, date: { $gte: date, $lt: dayjs(date).add(1, 'day').toDate() } });
   const yesterdayProgress = await Progress.findOne({ goalId, date: { $gte: yesterday, $lt: date } });
+
+  console.log(`Today's progress: ${JSON.stringify(todayProgress)}`);
+  console.log(`Yesterday's progress: ${JSON.stringify(yesterdayProgress)}`);
 
   if (todayProgress && todayProgress.minutes > 0) {
     if (yesterdayProgress && yesterdayProgress.minutes > 0) {
@@ -24,6 +31,7 @@ const updateStreak = async (goalId, date) => {
     goal.currentStreak = 0;
   }
 
+  console.log(`Updated streak for goal ${goalId}: ${goal.currentStreak}`);
   await goal.save();
 };
 
@@ -72,7 +80,7 @@ router.get('/', async (req, res) => {
     const goals = await Goal.find();
     console.log('Found goals:', goals);
 
-    const goalsWithProgress = await Promise.all(goals.map(async (goal) => {
+    const goalsWithProgressAndStreaks = await Promise.all(goals.map(async (goal) => {
       let progress = null;
       if (date) {
         const queryDate = new Date(date);
@@ -85,20 +93,56 @@ router.get('/', async (req, res) => {
         }).sort({ date: -1 });
       }
 
-      console.log(`Progress for goal ${goal._id} on date ${date}:`, progress);
+      const calculatedStreak = await calculateStreak(goal._id);
+
       return {
         ...goal.toObject(),
-        progress: progress ? progress.minutes : 0
+        progress: progress ? progress.minutes : 0,
+        currentStreak: calculatedStreak
       };
     }));
 
-    console.log('Sending goals with progress for date:', date, goalsWithProgress);
-    res.json(goalsWithProgress);
+    console.log('Sending goals with progress and streaks for date:', date, goalsWithProgressAndStreaks);
+    res.json(goalsWithProgressAndStreaks);
   } catch (error) {
-    console.error('Error fetching goals for date:', req.query.date, error);
+    console.error('Error fetching goals:', error);
     res.status(500).json({ message: 'Error fetching goals', error: error.message });
   }
 });
+
+async function calculateStreak(goalId) {
+  console.log(`Calculating streak for goal ${goalId}`);
+
+  const latestProgress = await Progress.findOne({ goalId }).sort({ date: -1 });
+  if (!latestProgress) {
+    console.log(`No progress found for goal ${goalId}`);
+    return 0;
+  }
+
+  let currentDate = new Date(latestProgress.date);
+  let streak = 0;
+
+  while (true) {
+    const progress = await Progress.findOne({
+      goalId: goalId,
+      date: {
+        $gte: new Date(currentDate.setHours(0, 0, 0, 0)),
+        $lt: new Date(currentDate.setHours(23, 59, 59, 999))
+      },
+      minutes: { $gt: 0 }
+    });
+
+    console.log(`Checking progress for date ${currentDate.toISOString()}: ${progress ? progress.minutes + ' minutes' : 'No progress'}`);
+
+    if (!progress) break;
+
+    streak++;
+    currentDate.setDate(currentDate.getDate() - 1);
+  }
+
+  console.log(`Final calculated streak for goal ${goalId}: ${streak}`);
+  return streak;
+}
 
 router.put('/:id', async (req, res) => {
   console.log('Received PUT request to /api/goals/:id', req.params.id, req.body);
@@ -149,28 +193,33 @@ router.post('/progress', async (req, res) => {
   try {
     const { goalId, minutes, date } = req.body;
     console.log(`Received progress data: Goal ID ${goalId}, ${minutes} minutes, Date: ${date}`);
-    console.log(`Date type: ${typeof date}, Date value: ${date}`);
 
     const utcDate = new Date(date);
-    console.log(`Converted UTC Date: ${utcDate}`);
     utcDate.setUTCHours(0, 0, 0, 0);
-    console.log(`UTC Date after setting hours to 0: ${utcDate}`);
+    console.log(`Converted UTC Date: ${utcDate}`);
 
     let progress = await Progress.findOne({ goalId, date: utcDate });
     if (progress) {
+      console.log(`Updating existing progress: ${JSON.stringify(progress)}`);
       progress.minutes = minutes;
-      progress.streakUpdated = new Date();
-      await progress.save();
-      console.log(`Updated existing progress for Goal ID ${goalId} on ${date}:`, progress);
     } else {
-      progress = new Progress({ goalId, minutes, date: utcDate, streakUpdated: new Date() });
-      await progress.save();
-      console.log(`Saved new progress for Goal ID ${goalId} on ${date}:`, progress);
+      console.log(`Creating new progress entry`);
+      progress = new Progress({ goalId, minutes, date: utcDate });
+    }
+    await progress.save();
+    console.log(`Saved progress: ${JSON.stringify(progress)}`);
+
+    const updatedStreak = await calculateStreak(goalId);
+    console.log(`Updated streak for goal ${goalId}: ${updatedStreak}`);
+
+    const goal = await Goal.findById(goalId);
+    if (goal) {
+      goal.currentStreak = updatedStreak;
+      await goal.save();
+      console.log(`Updated goal streak in database: ${JSON.stringify(goal)}`);
     }
 
-    await updateStreak(goalId, utcDate);
-
-    res.status(200).json({ message: 'Progress saved successfully', progress });
+    res.status(200).json({ message: 'Progress saved successfully', progress, updatedStreak });
   } catch (error) {
     console.error('Error saving or updating progress:', error);
     res.status(500).json({ message: 'Error saving progress', error: error.message });

@@ -18,7 +18,7 @@ export const getGoals = async (date) => {
     const url = date ? `${API_URL}/goals?date=${date}` : `${API_URL}/goals`;
     console.log('Requesting goals from API:', url);
     const response = await axios.get(url);
-    console.log('API response for goals:', response.data);
+    console.log('API response for goals:', JSON.stringify(response.data, null, 2));
     return response.data;
   } catch (error) {
     console.error('Error fetching goals:', error.response ? error.response.data : error);
