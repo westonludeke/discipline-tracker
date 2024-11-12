@@ -239,6 +239,24 @@ router.get('/:id/streak', async (req, res) => {
   }
 });
 
+router.get('/:goalId/streak-data', async (req, res) => {
+  try {
+    const { goalId } = req.params;
+    const goal = await Goal.findById(goalId);
+    if (!goal) {
+      return res.status(404).json({ message: 'Goal not found' });
+    }
+    const streakData = {
+      name: goal.name,
+      currentStreak: goal.currentStreak,
+    };
+    res.json(streakData);
+  } catch (error) {
+    console.error('Error fetching goal streak data:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 router.get('/chart-data', async (req, res) => {
   try {
     const goals = await Goal.find();

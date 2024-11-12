@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import Modal from './Modal';
 import { createGoal, getGoals, updateGoal, deleteGoal } from '../api/goals';
 
@@ -126,7 +127,7 @@ function Goals() {
         {goals.map((goal) => (
           <li key={goal._id} className="list-group-item d-flex justify-content-between align-items-center">
             <div>
-              {goal.name} - {goal.targetMinutes} minutes
+              <Link to={`/streak-calendar/${goal._id}`}>{goal.name}</Link> - {goal.targetMinutes} minutes
               <span className="ml-2 badge bg-secondary">Streak: {goal.currentStreak} days</span>
             </div>
             <div>

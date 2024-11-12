@@ -4,6 +4,7 @@ import HomePage from './components/HomePage';
 import Goals from './components/Goals';
 import Reports from './components/Reports';
 import Streaks from './components/Streaks';
+import StreakCalendar from './components/StreakCalendar';
 import Navigation from './components/Navigation';
 
 function AppRouter() {
@@ -16,6 +17,7 @@ function AppRouter() {
         <Route path="/goals" element={<Goals />} />
         <Route path="/reports" element={<Reports />} />
         <Route path="/streaks" element={<Streaks />} />
+        <Route path="/streak-calendar/:goalId" element={<StreakCalendar />} />
       </Routes>
     </Router>
   );
