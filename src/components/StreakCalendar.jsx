@@ -16,7 +16,8 @@ function StreakCalendar() {
         const data = await getGoalStreakData(goalId);
         console.log('Fetched goal streak data:', JSON.stringify(data, null, 2));
         setGoalData(data);
-        generateCalendars(data); // Pass the entire data object
+        generateCalendars(data);
+        console.log('Generated calendars:', calendars);
       } catch (error) {
         console.error('Error fetching goal streak data:', error);
       }
@@ -32,11 +33,17 @@ function StreakCalendar() {
       const monthStart = new Date(today.getFullYear(), today.getMonth() - i, 1);
       calendars.push({
         date: monthStart,
-        tileClassName: ({ date }) => {
+        tileClassName: ({ date, view }) => {
+          if (view !== 'month') return null;
           const dateString = date.toISOString().split('T')[0];
           const isStreakDay = goalData.streakData && goalData.streakData[dateString];
-          console.log(`Date: ${dateString}, Is streak day: ${isStreakDay}`);
-          return isStreakDay ? 'streak-day' : null;
+          const isFirstOfMonth = date.getDate() === 1;
+
+          if (isFirstOfMonth && !isStreakDay) {
+            return 'react-calendar__tile--non-active';
+          }
+
+          return isStreakDay ? 'streak-day' : 'react-calendar__tile--non-active';
         },
       });
     }

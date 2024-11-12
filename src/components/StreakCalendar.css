@@ -29,6 +29,11 @@
   color: white;
 }
 
+.react-calendar__tile--non-active {
+  background: none !important;
+  color: inherit !important;
+}
+
 .react-calendar__tile.streak-day {
   background-color: #4caf50;
   color: white;

@@ -125,6 +125,6 @@ discipline-tracker-app/
 
 ### License
 
-The project is proprietary (not open source).
+The project is proprietary (not open source).  
 Copyright (c) 2024.
 ```
