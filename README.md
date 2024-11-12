@@ -55,7 +55,15 @@ discipline-tracker-app/
 │   │   ├── Goals.jsx
 │   │   ├── GoalsList.jsx
 │   │   ├── HomePage.jsx
-│   │   └── Modal.jsx
+│   │   ├── Modal.jsx
+│   │   ├── GoalProgressChart.jsx
+│   │   ├── HistoricalLog.jsx
+│   │   ├── MonthlyProgressTable.jsx
+│   │   ├── Navigation.jsx
+│   │   ├── Reports.jsx
+│   │   ├── Streaks.jsx
+│   │   ├── StreakCalendar.jsx
+│   │   └── StreakCalendar.css
 │   ├── index.css
 │   └── main.jsx
 └── vite.config.js
@@ -117,6 +125,6 @@ discipline-tracker-app/
 
 ### License
 
-The project is proprietary (not open source).  
+The project is proprietary (not open source).
 Copyright (c) 2024.
 ```

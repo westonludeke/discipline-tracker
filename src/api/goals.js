@@ -51,7 +51,7 @@ export const deleteGoal = async (id) => {
 export const getGoalStreakData = async (goalId) => {
   try {
     const response = await axios.get(`${API_URL}/goals/${goalId}/streak-data`);
-    console.log('Fetched goal streak data successfully', response.data);
+    console.log('API response for goal streak data:', JSON.stringify(response.data, null, 2));
     return response.data;
   } catch (error) {
     console.error('Error fetching goal streak data:', error);

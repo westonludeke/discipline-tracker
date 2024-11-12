@@ -246,11 +246,19 @@ router.get('/:goalId/streak-data', async (req, res) => {
     if (!goal) {
       return res.status(404).json({ message: 'Goal not found' });
     }
-    const streakData = {
+    const streakData = await Progress.find({ goalId });
+    console.log('Streak data from database:', JSON.stringify(streakData, null, 2));
+    const formattedStreakData = streakData.reduce((acc, progress) => {
+      acc[progress.date.toISOString().split('T')[0]] = progress.minutes > 0;
+      return acc;
+    }, {});
+    const response = {
       name: goal.name,
       currentStreak: goal.currentStreak,
+      streakData: formattedStreakData,
     };
-    res.json(streakData);
+    console.log('Formatted streak data response:', JSON.stringify(response, null, 2));
+    res.json(response);
   } catch (error) {
     console.error('Error fetching goal streak data:', error);
     res.status(500).json({ message: 'Server error' });
