@@ -11,6 +11,7 @@ function Navigation() {
           <Link className="nav-item nav-link" to="/goals">Goals</Link>
           <Link className="nav-item nav-link" to="/reports">Reports</Link>
           <Link className="nav-item nav-link" to="/streaks">Streaks</Link>
+          <Link className="nav-item nav-link" to="/weekly-reports">Weekly Reports</Link>
         </div>
       </div>
     </nav>

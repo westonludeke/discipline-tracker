@@ -4,6 +4,7 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import goalRoutes from './routes/goals.js';
+import { router as weeklyReportsRoutes } from './routes/weeklyReports.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -19,9 +20,12 @@ mongoose.connect('mongodb://localhost:27017/discipline-tracker-app', {
   console.log('MongoDB connected successfully.');
   console.log('Database connection string:', mongoose.connection.host + ':' + mongoose.connection.port);
 })
-  .catch((error) => console.error('MongoDB connection error:', error));
+  .catch((error) => {
+    console.error('MongoDB connection error:', error);
+  });
 
 app.use('/api/goals', goalRoutes);
+app.use('/api', weeklyReportsRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
