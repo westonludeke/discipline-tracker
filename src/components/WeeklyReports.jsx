@@ -3,29 +3,48 @@ import axios from 'axios';
 import dayjs from 'dayjs';
 
 const WeeklyReports = () => {
-  const [weeklyData, setWeeklyData] = useState([]);
-  const [startDate, setStartDate] = useState(dayjs().startOf('week'));
+  const [weeksData, setWeeksData] = useState([]);
+  const [currentWeekIndex, setCurrentWeekIndex] = useState(0);
+  const numberOfWeeksToShow = 4; // You can adjust this number as needed
 
   useEffect(() => {
-    fetchWeeklyData();
-  }, [startDate]);
+    fetchMultipleWeeksData();
+  }, []);
 
-  const fetchWeeklyData = async () => {
+  const fetchMultipleWeeksData = async () => {
     try {
-      console.log('Fetching weekly data for startDate:', startDate.format('YYYY-MM-DD'));
-      const response = await axios.get(`http://localhost:3000/api/weekly-report?startDate=${startDate.format('YYYY-MM-DD')}`);
-      console.log('Received weekly data:', JSON.stringify(response.data, null, 2));
-      setWeeklyData(response.data);
+      const currentDate = dayjs();
+      const weeksPromises = [];
+
+      for (let i = 0; i < numberOfWeeksToShow; i++) {
+        const startDate = currentDate.subtract(i, 'week').startOf('week');
+        weeksPromises.push(fetchWeeklyData(startDate));
+      }
+
+      const resolvedWeeksData = await Promise.all(weeksPromises);
+      setWeeksData(resolvedWeeksData.sort((a, b) => b.startDate.diff(a.startDate)));
     } catch (error) {
-      console.error('Error fetching weekly data:', error);
+      console.error('Error fetching multiple weeks data:', error);
     }
   };
 
-  const renderTable = () => {
-    if (weeklyData.length === 0) return <p>No data available for this week.</p>;
+  const fetchWeeklyData = async (startDate) => {
+    try {
+      const response = await axios.get(`http://localhost:3000/api/weekly-report?startDate=${startDate.format('YYYY-MM-DD')}`);
+      return {
+        startDate,
+        data: response.data
+      };
+    } catch (error) {
+      console.error('Error fetching weekly data:', error);
+      return null;
+    }
+  };
 
-    const goals = Object.keys(weeklyData[0]).filter(key => key !== 'date');
-    console.log('Rendering table with goals:', goals);
+  const renderTable = (weekData) => {
+    if (!weekData || weekData.data.length === 0) return <p>No data available for this week.</p>;
+
+    const goals = Object.keys(weekData.data[0]).filter(key => key !== 'date');
 
     return (
       <table className="table table-bordered">
@@ -41,7 +60,7 @@ const WeeklyReports = () => {
           </tr>
         </thead>
         <tbody>
-          {weeklyData.map((day, index) => (
+          {weekData.data.map((day, index) => (
             <tr key={index}>
               <td>{dayjs(day.date).format('dddd, MMMM D')}</td>
               {goals.map(goal => (
@@ -57,11 +76,39 @@ const WeeklyReports = () => {
     );
   };
 
+  const handlePreviousWeek = () => {
+    setCurrentWeekIndex(prevIndex => Math.min(prevIndex + 1, weeksData.length - 1));
+  };
+
+  const handleNextWeek = () => {
+    setCurrentWeekIndex(prevIndex => Math.max(prevIndex - 1, 0));
+  };
+
   return (
     <div className="container mt-5">
       <h1>Weekly Reports</h1>
-      <h2>Week of {startDate.format('MMMM D, YYYY')}</h2>
-      {renderTable()}
+      {weeksData.map((weekData, index) => (
+        <div key={index} className={`mb-5 ${index === currentWeekIndex ? '' : 'd-none'}`}>
+          <h2>Week of {weekData.startDate.format('MMMM D, YYYY')}</h2>
+          {renderTable(weekData)}
+        </div>
+      ))}
+      <div className="d-flex justify-content-between mt-3">
+        <button
+          className="btn btn-primary"
+          onClick={handlePreviousWeek}
+          disabled={currentWeekIndex === weeksData.length - 1}
+        >
+          Previous Week
+        </button>
+        <button
+          className="btn btn-primary"
+          onClick={handleNextWeek}
+          disabled={currentWeekIndex === 0}
+        >
+          Next Week
+        </button>
+      </div>
     </div>
   );
 };

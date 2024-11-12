@@ -5,126 +5,99 @@ The Discipline Tracker App allows users to track their daily progress on persona
 
 ## Overview
 
-The Discipline Tracker App is built using a modern web stack with a focus on simplicity and ease of use. The architecture consists of a React frontend bundled with Vite for fast development and a Node.js backend using Express to serve the API. MongoDB is used as the database to store goals and progress data.
+The Discipline Tracker App is built using a combination of modern web technologies. The backend is powered by Node.js and Express, with data stored in a MongoDB database. The frontend is a React application, bundled with Vite for fast development and hot reloading. The app uses various libraries for enhanced functionality, such as Mongoose for MongoDB object modeling, Bootstrap for responsive design, and Chart.js for data visualization.
 
 ### Technologies Used
 
-- **Node.js**: JavaScript runtime for building server-side applications.
-- **MongoDB**: NoSQL database for storing goals and progress data.
-- **Express**: Web server framework for Node.js.
-- **Mongoose**: MongoDB object modeling tool for Node.js.
-- **Bootstrap**: CSS framework for responsive front-end design.
-- **Body-parser**: Middleware for parsing incoming request bodies.
-- **CORS**: Middleware for enabling Cross-Origin Resource Sharing.
-- **Morgan**: HTTP request logger middleware.
-- **Chart.js**: JavaScript library for creating charts.
-- **jQuery**: JavaScript library for DOM manipulation.
-- **Day.js**: Lightweight JavaScript date library for parsing, validating, manipulating, and formatting dates.
-- **React**: Frontend library for building user interfaces.
-- **Vite**: Development server and build tool for modern web projects.
+- **Backend**: Node.js, Express, MongoDB, Mongoose
+- **Frontend**: React, Vite, Bootstrap, Chart.js, jQuery, Day.js
+- **Middleware**: Body-parser, CORS, Morgan
 
 ### Project Structure
 
-The project is organized as follows:
+The project is organized into the following main directories and files:
 
-```
-discipline-tracker-app/
-├── .eslintrc.cjs
-├── .gitignore
-├── index.html
-├── package.json
-├── public/
-│   └── .gitkeep
-├── server/
-│   ├── index.js
-│   ├── models/
-│   │   ├── Goal.js
-│   │   └── Progress.js
-│   └── routes/
-│       └── goals.js
-├── src/
-│   ├── App.css
-│   ├── App.jsx
-│   ├── AppRouter.jsx
-│   ├── api/
-│   │   ├── goals.js
-│   │   └── progress.js
-│   ├── assets/
-│   │   └── .gitkeep
-│   ├── components/
-│   │   ├── Goals.jsx
-│   │   ├── GoalsList.jsx
-│   │   ├── HomePage.jsx
-│   │   ├── Modal.jsx
-│   │   ├── GoalProgressChart.jsx
-│   │   ├── HistoricalLog.jsx
-│   │   ├── MonthlyProgressTable.jsx
-│   │   ├── Navigation.jsx
-│   │   ├── Reports.jsx
-│   │   ├── Streaks.jsx
-│   │   ├── StreakCalendar.jsx
-│   │   └── StreakCalendar.css
-│   ├── index.css
-│   └── main.jsx
-└── vite.config.js
-```
+- **Backend**:
+  - `server/index.js`: Sets up the Express server and connects to MongoDB.
+  - `server/models/Goal.js`: Defines the Mongoose schema for goals.
+  - `server/models/Progress.js`: Defines the Mongoose schema for progress tracking.
+  - `server/routes/goals.js`: Handles API routes for managing goals.
+  - `server/routes/weeklyReports.js`: Handles API routes for fetching weekly reports.
+- **Frontend**:
+  - `src/App.jsx`: Main React component.
+  - `src/components/`: Contains various reusable React components.
+  - `src/api/`: Contains API interaction functions.
+  - `src/main.jsx`: Entry point for the React application.
+  - `src/AppRouter.jsx`: Defines routing for the application.
 
 ## Features
 
-- **Add Goals**: Manage goals through a modal where users can add, edit, or delete goals.
-- **Display Today's Date**: The homepage displays the current date in a user-friendly format.
-- **List Today's Goals**: The homepage lists all goals for the day with the ability to input minutes spent on each goal.
-- **Toggle Between Days**: Users can navigate between days to view progress from previous days.
-- **Progress Tracking**: A `Reports` page shows historical progress, trends, and total minutes spent on goals.
-- **Streak Tracking**: Track consecutive days of goal adherence and visualize streaks on a calendar.
-- **User Authentication**: No user authentication is required as the app runs locally.
+### Add Goals
+- **Manage Goals Page**: Users can add, edit, or delete goals through a modal interface.
+- **Goal Details**: Specify the name of the goal and set a target number of minutes to spend on this goal each day.
 
-## Getting Started
+### Display Today's Date
+- The homepage displays the current date in a user-friendly format.
+
+### List Today's Goals
+- The homepage lists all goals the user has added, helping them focus on their daily objectives.
+
+### Add Goal Minutes
+- Users can input the number of minutes spent on each goal for the day, visualizing their progress.
+
+### Toggle Between Days
+- Users can view their progress from previous days using forward/back buttons.
+
+### Progress Tracking
+- The `Reports` page shows progress over time, including a historical log and monthly progress charts.
+
+### Streak Tracking
+- Tracks consecutive days the user has worked towards their goals.
+
+### Streak Calendar
+- Visual calendar showing goal streaks over time.
+
+### Weekly Reports
+- Provides a detailed breakdown of each day, grouped by week, showing progress and remaining target minutes.
+
+## Getting started
 
 ### Requirements
 
 - Node.js
-- MongoDB (or MongoDB Atlas for cloud-based database)
+- MongoDB (or MongoDB Atlas for cloud setup)
+- npm (Node Package Manager)
 
 ### Quickstart
 
 1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/yourusername/discipline-tracker-app.git
-   cd discipline-tracker-app
-   ```
+    ```bash
+    git clone https://github.com/yourusername/discipline-tracker-app.git
+    cd discipline-tracker-app
+    ```
 
 2. **Install dependencies**:
-   ```bash
-   npm install
-   ```
+    ```bash
+    npm install
+    ```
 
-3. **Start the MongoDB server**:
-   If using a local MongoDB instance, ensure it is running. For MongoDB Atlas, set up your connection string.
+3. **Set up MongoDB**:
+    - Ensure MongoDB is running locally or configure MongoDB Atlas.
 
-4. **Configure environment variables**:
-   Create a `.env` file in the root directory with the following content:
-   ```env
-   MONGODB_URI=mongodb://localhost:27017/discipline-tracker-app
-   PORT=3000
-   ```
+4. **Run the backend server**:
+    ```bash
+    npm run server
+    ```
 
-5. **Run the backend server**:
-   ```bash
-   npm run server
-   ```
+5. **Run the frontend**:
+    ```bash
+    npm run dev
+    ```
 
-6. **Run the frontend development server**:
-   In a separate terminal, run:
-   ```bash
-   npm run dev
-   ```
-
-7. **Access the app**:
-   Open your browser and navigate to `http://localhost:3000`.
+6. **Access the app**:
+    - Open your browser and navigate to `http://localhost:3000`.
 
 ### License
 
-The project is proprietary (not open source).  
-Copyright (c) 2024.
+The project is proprietary (not open source). Copyright (c) 2024.
 ```
