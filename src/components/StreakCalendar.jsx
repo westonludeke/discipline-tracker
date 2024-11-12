@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import Calendar from 'react-calendar';
 import { getGoalStreakData } from '../api/goals';
 import 'react-calendar/dist/Calendar.css';
-import './StreakCalendar.css'; // We'll create this file for custom styles
+import './StreakCalendar.css';
 
 function StreakCalendar() {
   const { goalId } = useParams();
