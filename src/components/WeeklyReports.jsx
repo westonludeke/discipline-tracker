@@ -63,6 +63,10 @@ const WeeklyReports = () => {
     const goals = Object.keys(weekData.data[0]).filter(key => key !== 'date');
     const totals = calculateTotals(weekData.data);
 
+    const goalColumnStyle = {
+      backgroundColor: '#d5e0d7'
+    };
+
     return (
       <table className="table table-bordered">
         <thead>
@@ -70,7 +74,7 @@ const WeeklyReports = () => {
             <th>Date</th>
             {goals.map(goal => (
               <React.Fragment key={goal}>
-                <th>{goal}</th>
+                <th style={goalColumnStyle}>{goal}</th>
                 <th>Target</th>
               </React.Fragment>
             ))}
@@ -82,7 +86,7 @@ const WeeklyReports = () => {
               <td>{dayjs(day.date).format('dddd, MMMM D')}</td>
               {goals.map(goal => (
                 <React.Fragment key={goal}>
-                  <td>{day[goal]?.minutes || 0}</td>
+                  <td style={goalColumnStyle}>{day[goal]?.minutes || 0}</td>
                   <td>{day[goal]?.target || 0}</td>
                 </React.Fragment>
               ))}
@@ -92,7 +96,7 @@ const WeeklyReports = () => {
             <td><strong>Totals</strong></td>
             {goals.map(goal => (
               <React.Fragment key={goal}>
-                <td><strong>{totals[goal]?.minutes || 0}</strong></td>
+                <td style={goalColumnStyle}><strong>{totals[goal]?.minutes || 0}</strong></td>
                 <td><strong>{totals[goal]?.target || 0}</strong></td>
               </React.Fragment>
             ))}

@@ -5,74 +5,56 @@ The Discipline Tracker App allows users to track their daily progress on persona
 
 ## Overview
 
-The Discipline Tracker App is built using a combination of modern web technologies. The backend is powered by Node.js and Express, with data stored in a MongoDB database. The frontend is a React application, bundled with Vite for fast development and hot reloading. The app uses various libraries for enhanced functionality, such as Mongoose for MongoDB object modeling, Bootstrap for responsive design, and Chart.js for data visualization.
-
-### Technologies Used
-
-- **Backend**: Node.js, Express, MongoDB, Mongoose
-- **Frontend**: React, Vite, Bootstrap, Chart.js, jQuery, Day.js
-- **Middleware**: Body-parser, CORS, Morgan
+The Discipline Tracker App is built using modern web technologies to ensure a smooth and responsive user experience. The frontend is developed with React and styled using Bootstrap for a clean and responsive design. The backend is powered by Node.js with Express.js to handle server-side logic and MongoDB for data storage. The application also incorporates various libraries such as Mongoose for MongoDB object modeling, Chart.js for visualizing progress, and Day.js for date manipulation.
 
 ### Project Structure
 
-The project is organized into the following main directories and files:
+- **Frontend**: React with Vite for fast development, Bootstrap for styling, Axios for API requests.
+- **Backend**: Node.js with Express.js, Mongoose for MongoDB interactions, various middleware for request handling.
+- **Database**: MongoDB for storing user goals and progress data.
 
-- **Backend**:
-  - `server/index.js`: Sets up the Express server and connects to MongoDB.
-  - `server/models/Goal.js`: Defines the Mongoose schema for goals.
-  - `server/models/Progress.js`: Defines the Mongoose schema for progress tracking.
-  - `server/routes/goals.js`: Handles API routes for managing goals.
-  - `server/routes/weeklyReports.js`: Handles API routes for fetching weekly reports.
-- **Frontend**:
-  - `src/App.jsx`: Main React component.
-  - `src/components/`: Contains various reusable React components.
-  - `src/api/`: Contains API interaction functions.
-  - `src/main.jsx`: Entry point for the React application.
-  - `src/AppRouter.jsx`: Defines routing for the application.
+### Key Files and Directories
+
+- `src/`: Contains all the frontend React components and assets.
+  - `components/`: React components for different parts of the app.
+  - `api/`: API service files for interacting with the backend.
+  - `App.jsx`: Main app component.
+  - `main.jsx`: Entry point for the React app.
+- `server/`: Contains the backend server code.
+  - `models/`: Mongoose schemas for MongoDB collections.
+  - `routes/`: Express routes for handling API requests.
+  - `index.js`: Main server file.
+- `.eslintrc.cjs`: Configuration for ESLint.
+- `.gitignore`: Specifies files and directories to be ignored by Git.
+- `package.json`: Metadata for the Node.js project, including dependencies and scripts.
+- `README.md`: Project documentation (this file).
 
 ## Features
 
-### Add Goals
-- **Manage Goals Page**: Users can add, edit, or delete goals through a modal interface.
-- **Goal Details**: Specify the name of the goal and set a target number of minutes to spend on this goal each day.
-
-### Display Today's Date
-- The homepage displays the current date in a user-friendly format.
-
-### List Today's Goals
-- The homepage lists all goals the user has added, helping them focus on their daily objectives.
-
-### Add Goal Minutes
-- Users can input the number of minutes spent on each goal for the day, visualizing their progress.
-
-### Toggle Between Days
-- Users can view their progress from previous days using forward/back buttons.
-
-### Progress Tracking
-- The `Reports` page shows progress over time, including a historical log and monthly progress charts.
-
-### Streak Tracking
-- Tracks consecutive days the user has worked towards their goals.
-
-### Streak Calendar
-- Visual calendar showing goal streaks over time.
-
-### Weekly Reports
-- Provides a detailed breakdown of each day, grouped by week, showing progress and remaining target minutes.
+- **Add Goals**: Manage goals through a dedicated modal, specifying goal name and target minutes.
+- **Display Today's Date**: Homepage displays the current date in a user-friendly format.
+- **List Today's Goals**: Homepage lists all goals for the day with the ability to input minutes spent on each goal.
+- **Toggle Between Days**: Navigate between days to view past progress.
+- **Progress Tracking**: Detailed reports page showing historical progress with charts and logs.
+- **Streak Tracking**: Track consecutive days of goal achievement.
+- **Streak Calendar**: Visualize goal streaks over time with a calendar view.
+- **User Authentication**: No user authentication needed; app runs locally.
+- **Weekly Reports**: Detailed breakdown of daily progress grouped by week with color-coded columns for goals.
 
 ## Getting started
 
 ### Requirements
 
+To run the Discipline Tracker App, you need to have the following technologies installed on your computer:
+
 - Node.js
-- MongoDB (or MongoDB Atlas for cloud setup)
-- npm (Node Package Manager)
+- MongoDB (or use a cloud version like MongoDB Atlas)
 
 ### Quickstart
 
 1. **Clone the repository**:
     ```bash
-    git clone https://github.com/yourusername/discipline-tracker-app.git
+    git clone <repository-url>
     cd discipline-tracker-app
     ```
 
@@ -82,20 +64,22 @@ The project is organized into the following main directories and files:
     ```
 
 3. **Set up MongoDB**:
-    - Ensure MongoDB is running locally or configure MongoDB Atlas.
+   - Ensure MongoDB is running locally or set up a cloud instance (e.g., MongoDB Atlas).
 
 4. **Run the backend server**:
     ```bash
-    npm run server
+    cd server
+    node index.js
     ```
 
 5. **Run the frontend**:
     ```bash
+    cd ..
     npm run dev
     ```
 
 6. **Access the app**:
-    - Open your browser and navigate to `http://localhost:3000`.
+   - Open your browser and navigate to `http://localhost:3000`.
 
 ### License
 
