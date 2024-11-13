@@ -50,8 +50,7 @@ const WeeklyReports = () => {
             totals[key] = { minutes: 0, target: 0 };
           }
           totals[key].minutes += day[key].minutes;
-          // For totals, we sum up the absolute values of targets
-          totals[key].target += Math.abs(day[key].target);
+          totals[key].target += day[key].target; // Now includes negative values
         }
       });
     });
