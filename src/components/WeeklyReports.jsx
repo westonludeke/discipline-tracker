@@ -50,7 +50,8 @@ const WeeklyReports = () => {
             totals[key] = { minutes: 0, target: 0 };
           }
           totals[key].minutes += day[key].minutes;
-          totals[key].target += day[key].target;
+          // For totals, we sum up the absolute values of targets
+          totals[key].target += Math.abs(day[key].target);
         }
       });
     });
@@ -84,12 +85,16 @@ const WeeklyReports = () => {
           {weekData.data.map((day, index) => (
             <tr key={index}>
               <td>{dayjs(day.date).format('dddd, MMMM D')}</td>
-              {goals.map(goal => (
-                <React.Fragment key={goal}>
-                  <td style={goalColumnStyle}>{day[goal]?.minutes || 0}</td>
-                  <td>{day[goal]?.target || 0}</td>
-                </React.Fragment>
-              ))}
+              {goals.map(goal => {
+                const minutes = day[goal]?.minutes || 0;
+                const target = day[goal]?.target || 0;
+                return (
+                  <React.Fragment key={goal}>
+                    <td style={goalColumnStyle}>{minutes}</td>
+                    <td>{target}</td>
+                  </React.Fragment>
+                );
+              })}
             </tr>
           ))}
           <tr className="table-active">

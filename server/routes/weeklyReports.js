@@ -35,7 +35,7 @@ router.get('/weekly-report', async (req, res) => {
         const goalProgress = dayProgress.find(p => p.goalId.toString() === goal._id.toString());
         dayData[goal.name] = {
           minutes: goalProgress ? goalProgress.minutes : 0,
-          target: Math.max(0, goal.targetMinutes - (goalProgress ? goalProgress.minutes : 0))
+          target: goal.targetMinutes - (goalProgress ? goalProgress.minutes : 0)
         };
       });
 
