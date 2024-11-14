@@ -1,77 +1,88 @@
+```markdown
 # Discipline Tracker App
 
 The Discipline Tracker App allows users to track their daily progress on personal goals, enabling them to see how their discipline evolves over time. The app provides an intuitive interface for goal management and progress tracking, fostering accountability and motivation.
 
 ## Overview
 
-The Discipline Tracker App is built using a modern web stack, combining React for the frontend and Node.js with Express for the backend. Data is stored in a MongoDB database. The project leverages several libraries and tools to enhance functionality and user experience, including Bootstrap for responsive design, Chart.js for data visualization, and Day.js for date manipulation.
+The Discipline Tracker App is built using a modern web stack, leveraging both frontend and backend technologies to deliver a seamless user experience. The frontend is developed using React with Vite for fast development and hot reloading, while the backend is powered by Node.js and Express, with MongoDB as the database.
 
-### Technologies Used
+### Architecture and Technologies
 
-- **Frontend**: React, Vite, Bootstrap, Chart.js, jQuery, Day.js
-- **Backend**: Node.js, Express, MongoDB, Mongoose, Body-Parser, CORS, Morgan
-- **Development Tools**: ESLint, Git
+- **Node.js**: JavaScript runtime for building scalable network applications.
+- **Express**: Web server framework for Node.js.
+- **MongoDB**: NoSQL database for storing goal and progress data.
+- **Mongoose**: MongoDB object modeling tool for Node.js.
+- **React**: JavaScript library for building user interfaces.
+- **Vite**: Next-generation frontend tooling for fast development.
+- **Bootstrap**: CSS framework for responsive design.
+- **Body-parser**: Middleware for parsing incoming request bodies.
+- **CORS**: Middleware for enabling Cross-Origin Resource Sharing.
+- **Morgan**: HTTP request logger middleware.
+- **Chart.js**: JavaScript library for creating charts.
+- **jQuery**: JavaScript library for DOM manipulation.
+- **Day.js**: Lightweight JavaScript date library.
 
 ### Project Structure
 
-```
-discipline-tracker-app/
-├── public/
-│   ├── .gitkeep
-├── server/
-│   ├── index.js
-│   ├── models/
-│   │   ├── Goal.js
-│   │   ├── Progress.js
-│   ├── routes/
-│   │   ├── goals.js
-│   │   ├── weeklyReports.js
-├── src/
-│   ├── api/
-│   │   ├── goals.js
-│   │   ├── progress.js
-│   ├── assets/
-│   │   ├── .gitkeep
-│   ├── components/
-│   │   ├── GoalProgressChart.jsx
-│   │   ├── Goals.jsx
-│   │   ├── GoalsList.jsx
-│   │   ├── HistoricalLog.jsx
-│   │   ├── HomePage.jsx
-│   │   ├── Modal.jsx
-│   │   ├── MonthlyProgressTable.jsx
-│   │   ├── Navigation.jsx
-│   │   ├── Reports.jsx
-│   │   ├── StreakCalendar.css
-│   │   ├── StreakCalendar.jsx
-│   │   ├── Streaks.jsx
-│   │   ├── WeeklyReports.jsx
-│   ├── App.css
-│   ├── App.jsx
-│   ├── AppRouter.jsx
-│   ├── index.css
-│   ├── main.jsx
-├── .eslintrc.cjs
-├── .gitignore
-├── index.html
-├── package.json
-├── README.md
-├── vite.config.js
-```
+The project is organized into the following main directories and files:
+
+- **server/**: Contains backend code, including models, routes, and server setup.
+  - `index.js`: Main entry point for the Express server.
+  - `models/Goal.js`: Mongoose schema for goals.
+  - `models/Progress.js`: Mongoose schema for progress tracking.
+  - `routes/goals.js`: Routes for managing goals.
+  - `routes/weeklyReports.js`: Routes for generating weekly reports.
+- **src/**: Contains frontend code, including components and API interactions.
+  - `App.jsx`: Main React component.
+  - `AppRouter.jsx`: Sets up routing for the application.
+  - `components/`: Directory containing React components.
+  - `api/`: Directory containing API interaction functions.
+- **public/**: Contains static assets.
+- **.eslintrc.cjs**: Configuration for ESLint.
+- **.gitignore**: Specifies files and directories to ignore in Git.
+- **README.md**: Provides an overview and instructions for the project.
+- **package.json**: Node.js package metadata and dependencies.
+- **vite.config.js**: Configuration for Vite.
 
 ## Features
 
-- **Add Goals**: Manage goals through a dedicated `Goals` page, where users can add, edit, or delete goals.
-- **Goal Details**: Specify goal names and target daily minutes.
-- **Display Today's Date**: Show the current date on the homepage.
-- **List Today's Goals**: Display all goals for the day and allow input of minutes spent.
-- **Toggle Between Days**: View progress from previous days using forward/back buttons.
-- **Progress Tracking**: Access a `Reports` page with historical logs and monthly progress charts.
-- **Streak Tracking**: Track consecutive days of goal achievement and display streaks on the `Goals` page.
-- **Streak Calendar**: Visualize goal streaks over time with a calendar view.
-- **Weekly Reports**: Detailed breakdown of daily progress, grouped by week, with totals and target calculations.
+### Add Goals
+- **Manage Goals Page**: Users can add, edit, or delete goals through a modal on the `Goals` page.
+- **Goal Details**: Users can specify goal names and set target minutes for each day of the week.
 
-## Getting started
+### Goals Modal
+- **Input Fields**: Modal includes input fields for goal name and target minutes for each day.
+
+### Display Today's Date
+- Homepage displays the current date in a user-friendly format.
+
+### List Today's Goals
+- Homepage lists all goals with target minutes for the current day.
+
+### Add Goal Minutes
+- Users can input the number of minutes spent on each goal for the day.
+
+### Toggle Between Days
+- Users can toggle between days to view progress from previous days.
+
+### Progress Tracking
+- **Reports Page**: Shows progress over time with historical logs and monthly progress charts.
+
+### Streak Tracking
+- **Reports Page**: Tracks consecutive days of goal achievement.
+- **Goals Page**: Displays current streak for each goal.
+
+### Streak Calendar
+- **Goals Page**: Visualizes goal streaks over time with a calendar view.
+
+### User Authentication
+- No user authentication is needed as the app runs locally.
+
+### Weekly Reports
+- **Weekly Reports Page**: Provides a detailed breakdown of daily progress, grouped by week.
+
+## Getting Started
 
 ### Requirements
 
@@ -80,32 +91,31 @@ discipline-tracker-app/
 
 ### Quickstart
 
-1. **Clone the repository**:
-   ```sh
-   git clone https://github.com/yourusername/discipline-tracker-app.git
+1. **Clone the repository:**
+   ```bash
+   git clone <repository-url>
    cd discipline-tracker-app
    ```
 
-2. **Install dependencies**:
-   ```sh
+2. **Install dependencies:**
+   ```bash
    npm install
    ```
 
-3. **Start the backend server**:
-   ```sh
-   cd server
-   node index.js
+3. **Run the backend server:**
+   ```bash
+   npm run server
    ```
 
-4. **Start the frontend development server**:
-   ```sh
-   cd ..
-   npm run dev
+4. **Run the frontend development server:**
+   ```bash
+   npm start
    ```
 
-5. **Access the app**:
-   Open your web browser and navigate to `http://localhost:3000`.
+5. **Access the app:**
+   Open your browser and navigate to `http://localhost:3000`.
 
-### License
+## License
 
-This project is open source and licensed under the MIT License. You are free to fork, modify, distribute, and use this project.
+The project is proprietary (not open source). Copyright (c) 2024.
+```
