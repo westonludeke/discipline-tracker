@@ -1,19 +1,25 @@
 import mongoose from 'mongoose';
 
-const goalSchema = new mongoose.Schema({
+const GoalSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true,
+    required: true
   },
   targetMinutes: {
-    type: Number,
-    required: true,
-    min: 1,
+    sunday: { type: Number, min: 0, required: true },
+    monday: { type: Number, min: 0, required: true },
+    tuesday: { type: Number, min: 0, required: true },
+    wednesday: { type: Number, min: 0, required: true },
+    thursday: { type: Number, min: 0, required: true },
+    friday: { type: Number, min: 0, required: true },
+    saturday: { type: Number, min: 0, required: true }
   },
   currentStreak: {
     type: Number,
-    default: 0,
-  },
+    default: 0
+  }
 }, { timestamps: true });
 
-export default mongoose.model('Goal', goalSchema);
+const Goal = mongoose.model('Goal', GoalSchema);
+
+export default Goal;

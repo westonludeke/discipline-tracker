@@ -6,7 +6,15 @@ import { createGoal, getGoals, updateGoal, deleteGoal } from '../api/goals';
 function Goals() {
   const [showModal, setShowModal] = useState(false);
   const [goalName, setGoalName] = useState('');
-  const [targetMinutes, setTargetMinutes] = useState('');
+  const [targetMinutes, setTargetMinutes] = useState({
+    sunday: 0,
+    monday: 0,
+    tuesday: 0,
+    wednesday: 0,
+    thursday: 0,
+    friday: 0,
+    saturday: 0
+  });
   const [goals, setGoals] = useState([]);
   const [editingGoal, setEditingGoal] = useState(null);
   const [error, setError] = useState('');
@@ -28,11 +36,19 @@ function Goals() {
     if (goal) {
       setEditingGoal(goal);
       setGoalName(goal.name);
-      setTargetMinutes(goal.targetMinutes.toString());
+      setTargetMinutes(goal.targetMinutes);
     } else {
       setEditingGoal(null);
       setGoalName('');
-      setTargetMinutes('');
+      setTargetMinutes({
+        sunday: 0,
+        monday: 0,
+        tuesday: 0,
+        wednesday: 0,
+        thursday: 0,
+        friday: 0,
+        saturday: 0
+      });
     }
     setShowModal(true);
   };
@@ -41,7 +57,15 @@ function Goals() {
     setShowModal(false);
     setEditingGoal(null);
     setGoalName('');
-    setTargetMinutes('');
+    setTargetMinutes({
+      sunday: 0,
+      monday: 0,
+      tuesday: 0,
+      wednesday: 0,
+      thursday: 0,
+      friday: 0,
+      saturday: 0
+    });
     setError('');
   };
 
@@ -54,17 +78,12 @@ function Goals() {
       return;
     }
 
-    const parsedMinutes = parseInt(targetMinutes);
-    if (isNaN(parsedMinutes) || parsedMinutes <= 0) {
-      setError('Target minutes must be a positive number');
-      return;
-    }
-
     try {
+      const goalData = editingGoal ? { name: goalName, targetMinutes } : { name: goalName, targetMinutes };
       if (editingGoal) {
-        await updateGoal(editingGoal._id, { name: goalName.trim(), targetMinutes: parsedMinutes });
+        await updateGoal(editingGoal._id, goalData);
       } else {
-        await createGoal({ name: goalName.trim(), targetMinutes: parsedMinutes });
+        await createGoal(goalData);
       }
       handleCloseModal();
       fetchGoals();
@@ -85,6 +104,11 @@ function Goals() {
     }
   };
 
+  const handleTargetMinutesChange = (day, value) => {
+    const parsedValue = parseInt(value);
+    setTargetMinutes(prev => ({ ...prev, [day]: parsedValue > 0 ? parsedValue : 0 }));
+  };
+
   return (
     <div className="container mt-5">
       <h1>Goals</h1>
@@ -95,8 +119,8 @@ function Goals() {
         <h2>{editingGoal ? 'Edit Goal' : 'Add New Goal'}</h2>
         <form onSubmit={handleSubmit}>
           {error && <div className="alert alert-danger">{error}</div>}
-          <div className="form-group">
-            <label htmlFor="goalName">Goal Name</label>
+          <div className="mb-3">
+            <label htmlFor="goalName" className="form-label">Goal Name</label>
             <input
               type="text"
               className="form-control"
@@ -106,28 +130,29 @@ function Goals() {
               required
             />
           </div>
-          <div className="form-group">
-            <label htmlFor="targetMinutes">Target Minutes</label>
-            <input
-              type="number"
-              className="form-control"
-              id="targetMinutes"
-              value={targetMinutes}
-              onChange={(e) => setTargetMinutes(e.target.value)}
-              required
-              min="1"
-            />
-          </div>
-          <button type="submit" className="btn btn-primary">
-            {editingGoal ? 'Update Goal' : 'Save Goal'}
-          </button>
+          {['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'].map((day) => (
+            <div className="mb-3" key={day}>
+              <label htmlFor={`target-${day}`} className="form-label">
+                {day.charAt(0).toUpperCase() + day.slice(1)} Target Minutes
+              </label>
+              <input
+                type="number"
+                className="form-control"
+                id={`target-${day}`}
+                value={targetMinutes[day]}
+                onChange={(e) => handleTargetMinutesChange(day, e.target.value)}
+                min="0"
+              />
+            </div>
+          ))}
+          <button type="submit" className="btn btn-primary">{editingGoal ? 'Update Goal' : 'Add Goal'}</button>
         </form>
       </Modal>
       <ul className="list-group mt-3">
         {goals.map((goal) => (
           <li key={goal._id} className="list-group-item d-flex justify-content-between align-items-center">
             <div>
-              <Link to={`/streak-calendar/${goal._id}`}>{goal.name}</Link> - {goal.targetMinutes} minutes
+              <Link to={`/streak-calendar/${goal._id}`}>{goal.name}</Link> - {Object.values(goal.targetMinutes).reduce((a, b) => a + b, 0)} minutes
               <span className="ml-2 badge bg-secondary">Streak: {goal.currentStreak} days</span>
             </div>
             <div>
@@ -143,6 +168,6 @@ function Goals() {
       </ul>
     </div>
   );
-}
+};
 
 export default Goals;

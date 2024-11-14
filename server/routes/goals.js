@@ -56,13 +56,14 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ message: 'Goal name cannot be empty' });
     }
 
-    if (!targetMinutes || isNaN(targetMinutes) || targetMinutes <= 0) {
-      return res.status(400).json({ message: 'Target minutes must be a positive number' });
+    const isValid = Object.values(targetMinutes).every(minutes => Number.isInteger(minutes) && minutes >= 0);
+    if (!isValid) {
+      return res.status(400).json({ message: 'All target minutes must be non-negative integers' });
     }
 
     const goal = new Goal({
       name: name.trim(),
-      targetMinutes: parseInt(targetMinutes),
+      targetMinutes,
     });
 
     const savedGoal = await goal.save();
@@ -153,13 +154,14 @@ router.put('/:id', async (req, res) => {
       return res.status(400).json({ message: 'Goal name cannot be empty' });
     }
 
-    if (!targetMinutes || isNaN(targetMinutes) || targetMinutes <= 0) {
-      return res.status(400).json({ message: 'Target minutes must be a positive number' });
+    const isValid = Object.values(targetMinutes).every(minutes => Number.isInteger(minutes) && minutes >= 0);
+    if (!isValid) {
+      return res.status(400).json({ message: 'All target minutes must be non-negative integers' });
     }
 
     const updatedGoal = await Goal.findByIdAndUpdate(
       req.params.id,
-      { name: name.trim(), targetMinutes: parseInt(targetMinutes) },
+      { name: name.trim(), targetMinutes },
       { new: true, runValidators: true }
     );
 

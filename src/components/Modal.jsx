@@ -1,6 +1,6 @@
 import React from 'react';
 
-function Modal({ show, handleClose, children }) {
+const Modal = ({ show, handleClose, children }) => {
   if (!show) {
     return null;
   }
@@ -22,6 +22,6 @@ function Modal({ show, handleClose, children }) {
       </div>
     </div>
   );
-}
+};
 
 export default Modal;

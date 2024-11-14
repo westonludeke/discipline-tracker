@@ -53,6 +53,10 @@ function GoalsList({ goals, onSaveProgress, date }) {
     }
   };
 
+  const getTotalMinutes = (targetMinutes) => {
+    return Object.values(targetMinutes).reduce((sum, minutes) => sum + minutes, 0);
+  };
+
   return (
     <div className="goals-list mt-4">
       <h3>Your Goals</h3>
@@ -72,7 +76,7 @@ function GoalsList({ goals, onSaveProgress, date }) {
                   className="form-control d-inline-block mr-2"
                   style={{ width: '80px' }}
                 />
-                <span>{(progressInputs[goal._id] || 0)}/{goal.targetMinutes} minutes</span>
+                <span>{(progressInputs[goal._id] || 0)}/{getTotalMinutes(goal.targetMinutes)} minutes</span>
                 <button
                   onClick={() => handleSave(goal._id)}
                   className="btn btn-primary btn-sm ml-2"
