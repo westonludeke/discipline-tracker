@@ -12,6 +12,7 @@ function Navigation() {
           <Link className="nav-item nav-link" to="/reports">Reports</Link>
           <Link className="nav-item nav-link" to="/streaks">Streaks</Link>
           <Link className="nav-item nav-link" to="/weekly-reports">Weekly Reports</Link>
+          <Link className="nav-item nav-link" to="/import">Import</Link>
         </div>
       </div>
     </nav>

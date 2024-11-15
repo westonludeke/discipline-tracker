@@ -6,10 +6,11 @@ import Reports from './components/Reports';
 import Streaks from './components/Streaks';
 import StreakCalendar from './components/StreakCalendar';
 import WeeklyReports from './components/WeeklyReports';
+import Import from './components/Import';
 import Navigation from './components/Navigation';
 
 function AppRouter() {
-  console.log('Rendering AppRouter with new Weekly Reports route');
+  console.log('Rendering AppRouter with new Import route');
   return (
     <Router>
       <Navigation />
@@ -20,6 +21,7 @@ function AppRouter() {
         <Route path="/streaks" element={<Streaks />} />
         <Route path="/streak-calendar/:goalId" element={<StreakCalendar />} />
         <Route path="/weekly-reports" element={<WeeklyReports />} />
+        <Route path="/import" element={<Import />} />
       </Routes>
     </Router>
   );
