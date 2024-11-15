@@ -47,10 +47,11 @@ const WeeklyReports = () => {
       Object.keys(day).forEach(key => {
         if (key !== 'date') {
           if (!totals[key]) {
-            totals[key] = { minutes: 0, target: 0 };
+            totals[key] = { minutes: 0, target: 0, remaining: 0 };
           }
           totals[key].minutes += day[key].minutes;
-          totals[key].target += day[key].target; // Now includes negative values
+          totals[key].target += day[key].target;
+          totals[key].remaining += day[key].remaining;
         }
       });
     });
@@ -76,6 +77,7 @@ const WeeklyReports = () => {
               <React.Fragment key={goal}>
                 <th style={goalColumnStyle}>{goal}</th>
                 <th>Target</th>
+                <th>Remaining</th>
               </React.Fragment>
             ))}
           </tr>
@@ -85,12 +87,12 @@ const WeeklyReports = () => {
             <tr key={index}>
               <td>{dayjs(day.date).format('dddd, MMMM D')}</td>
               {goals.map(goal => {
-                const minutes = day[goal]?.minutes || 0;
-                const target = day[goal]?.target || 0;
+                const { minutes, target, remaining } = day[goal];
                 return (
                   <React.Fragment key={goal}>
                     <td style={goalColumnStyle}>{minutes}</td>
                     <td>{target}</td>
+                    <td>{remaining}</td>
                   </React.Fragment>
                 );
               })}
@@ -102,6 +104,7 @@ const WeeklyReports = () => {
               <React.Fragment key={goal}>
                 <td style={goalColumnStyle}><strong>{totals[goal]?.minutes || 0}</strong></td>
                 <td><strong>{totals[goal]?.target || 0}</strong></td>
+                <td><strong>{totals[goal]?.remaining || 0}</strong></td>
               </React.Fragment>
             ))}
           </tr>

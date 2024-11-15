@@ -2,9 +2,9 @@ import express from 'express';
 import Goal from '../models/Goal.js';
 import Progress from '../models/Progress.js';
 import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc.js'; // Importing UTC plugin for dayjs
+import utc from 'dayjs/plugin/utc.js';
 
-dayjs.extend(utc); // Extending dayjs with UTC plugin
+dayjs.extend(utc);
 
 const router = express.Router();
 
@@ -12,7 +12,7 @@ router.get('/weekly-report', async (req, res) => {
   try {
     const { startDate } = req.query;
     console.log('Received startDate:', startDate);
-    const start = dayjs(startDate).utc().startOf('day'); // Using UTC
+    const start = dayjs(startDate).utc().startOf('day');
     console.log('Calculated start date in UTC:', start.format());
     const end = start.add(6, 'day').endOf('day');
     console.log('Calculated end date in UTC:', end.format());
@@ -25,7 +25,7 @@ router.get('/weekly-report', async (req, res) => {
     const weeklyData = [];
     for (let i = 0; i < 7; i++) {
       const currentDate = start.add(i, 'day');
-      const dayProgress = progress.filter(p => dayjs(p.date).utc().startOf('day').isSame(currentDate, 'day')); // Using UTC for comparison
+      const dayProgress = progress.filter(p => dayjs(p.date).utc().startOf('day').isSame(currentDate, 'day'));
 
       const dayData = {
         date: currentDate.format('YYYY-MM-DD'),
@@ -33,9 +33,12 @@ router.get('/weekly-report', async (req, res) => {
 
       goals.forEach(goal => {
         const goalProgress = dayProgress.find(p => p.goalId.toString() === goal._id.toString());
+        const dayOfWeek = currentDate.format('dddd').toLowerCase();
+        const dailyTarget = goal.targetMinutes[dayOfWeek];
         dayData[goal.name] = {
           minutes: goalProgress ? goalProgress.minutes : 0,
-          target: goal.targetMinutes - (goalProgress ? goalProgress.minutes : 0)
+          target: dailyTarget,
+          remaining: dailyTarget - (goalProgress ? goalProgress.minutes : 0)
         };
       });
 
