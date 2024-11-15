@@ -2,6 +2,7 @@ import express from 'express';
 import Goal from '../models/Goal.js';
 import Progress from '../models/Progress.js';
 import dayjs from 'dayjs';
+import { parseImportData } from '../../src/utils/dataParser.js';
 
 const router = express.Router();
 
@@ -312,6 +313,68 @@ router.get('/chart-data', async (req, res) => {
   } catch (error) {
     console.error('Error fetching chart data:', error);
     res.status(500).json({ message: 'Error fetching chart data', error: error.message });
+  }
+});
+
+router.post('/import', async (req, res) => {
+  console.log('Received import request with data:', req.body);
+  try {
+    const { data } = req.body;
+    const parsedData = parseImportData(data);
+    console.log('Parsed data:', parsedData);
+
+    for (const entry of parsedData) {
+      console.log('Processing entry:', entry);
+      const { Date: date, ...goalProgress } = entry;
+
+      for (const [goalName, minutes] of Object.entries(goalProgress)) {
+        console.log(`Processing goal: ${goalName}, minutes: ${minutes}`);
+        let goal = await Goal.findOne({ name: goalName });
+
+        if (!goal) {
+          console.log(`Creating new goal: ${goalName}`);
+          goal = new Goal({
+            name: goalName,
+            targetMinutes: {
+              sunday: 0,
+              monday: 0,
+              tuesday: 0,
+              wednesday: 0,
+              thursday: 0,
+              friday: 0,
+              saturday: 0
+            }
+          });
+          await goal.save();
+        }
+
+        console.log(`Updating progress for goal: ${goalName}, date: ${date}`);
+        let progress = await Progress.findOne({ goalId: goal._id, date });
+        if (progress) {
+          console.log(`Updating existing progress: ${progress}`);
+          progress.minutes = minutes;
+        } else {
+          console.log(`Creating new progress entry`);
+          progress = new Progress({
+            goalId: goal._id,
+            date,
+            minutes
+          });
+        }
+        await progress.save();
+
+        // Update streak
+        const updatedStreak = await calculateStreak(goal._id);
+        console.log(`Updated streak for goal ${goalName}: ${updatedStreak}`);
+        goal.currentStreak = updatedStreak;
+        await goal.save();
+      }
+    }
+
+    res.status(200).json({ message: 'Data imported successfully' });
+  } catch (error) {
+    console.error('Error importing data:', error);
+    res.status(500).json({ message: 'Error importing data', error: error.message });
   }
 });
 

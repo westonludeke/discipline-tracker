@@ -1,21 +1,18 @@
 import React, { useState } from 'react';
-import { parseImportData } from '../utils/dataParser';
+import api from '../api/axios';
 
 function Import() {
-  const [importData, setImportData] = useState('');
-  const [parsedData, setParsedData] = useState(null);
-  const [error, setError] = useState(null);
+  const [inputData, setInputData] = useState('');
+  const [message, setMessage] = useState('');
 
-  const handleImport = () => {
+  const handleImport = async () => {
     try {
-      const parsed = parseImportData(importData);
-      setParsedData(parsed);
-      setError(null);
-      console.log('Parsed data:', parsed);
+      const response = await api.post('/goals/import', { data: inputData });
+      console.log('Server response:', response.data);
+      setMessage('Data imported successfully');
     } catch (error) {
-      console.error('Error parsing data:', error.message, error.stack);
-      setError('Failed to parse the imported data. Please check the format and try again.');
-      setParsedData(null);
+      console.error('Error importing data:', error.message, error.stack);
+      setMessage('Error importing data');
     }
   };
 
@@ -28,20 +25,14 @@ function Import() {
           className="form-control"
           id="importTextArea"
           rows="10"
-          value={importData}
-          onChange={(e) => setImportData(e.target.value)}
+          value={inputData}
+          onChange={(e) => setInputData(e.target.value)}
         ></textarea>
       </div>
       <button className="btn btn-primary" onClick={handleImport}>
         Import
       </button>
-      {error && <div className="alert alert-danger mt-3">{error}</div>}
-      {parsedData && (
-        <div className="mt-3">
-          <h3>Parsed Data Preview:</h3>
-          <pre>{JSON.stringify(parsedData, null, 2)}</pre>
-        </div>
-      )}
+      {message && <div className="alert alert-success mt-3">{message}</div>}
     </div>
   );
 }

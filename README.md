@@ -42,6 +42,7 @@ discipline-tracker-app/
 │   │   ├── GoalsList.jsx
 │   │   ├── HistoricalLog.jsx
 │   │   ├── HomePage.jsx
+│   │   ├── Import.jsx
 │   │   ├── Modal.jsx
 │   │   ├── MonthlyProgressTable.jsx
 │   │   ├── Navigation.jsx
@@ -49,7 +50,7 @@ discipline-tracker-app/
 │   │   ├── StreakCalendar.css
 │   │   ├── StreakCalendar.jsx
 │   │   ├── Streaks.jsx
-│   │   └── WeeklyReports.jsx
+│   │   ├── WeeklyReports.jsx
 │   ├── App.css
 │   ├── App.jsx
 │   ├── AppRouter.jsx
