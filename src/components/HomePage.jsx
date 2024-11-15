@@ -64,7 +64,12 @@ function HomePage() {
           </button>
         </div>
       </header>
-      <GoalsList goals={goals} onSaveProgress={handleSaveProgress} />
+      {console.log('Rendering GoalsList with:', { goals, currentDay: currentDate.day() })}
+      <GoalsList
+        goals={goals}
+        onSaveProgress={handleSaveProgress}
+        currentDay={currentDate.day()}
+      />
     </div>
   );
 }
