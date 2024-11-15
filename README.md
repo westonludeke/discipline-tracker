@@ -74,6 +74,7 @@ discipline-tracker-app/
 - **Streak Tracking**: The app tracks and displays the number of consecutive days users have worked towards their goals.
 - **Streak Calendar**: Visual representation of goal streaks over time.
 - **Weekly Reports**: Detailed breakdown of daily progress, grouped by week, with a summary of time spent and remaining targets.
+- **Import Data**: Users can import progress data from a provided template.
 
 ## Getting Started
 
