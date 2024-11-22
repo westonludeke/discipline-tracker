@@ -20,9 +20,9 @@ function Import() {
     <div className="container mt-4">
       <div className="row">
         <div className="col-12">
-          <h1>Import Data</h1>
-          <div className="form-group">
-            <label htmlFor="importTextArea">Paste your data here:</label>
+          <h1 className="mb-4">Import Data</h1>
+          <div className="form-group mb-3">
+            <label htmlFor="importTextArea" className="form-label">Paste your data here:</label>
             <textarea
               className="form-control"
               id="importTextArea"

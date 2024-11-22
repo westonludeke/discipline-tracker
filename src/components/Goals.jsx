@@ -28,7 +28,7 @@ function Goals() {
       const fetchedGoals = await getGoals();
       setGoals(fetchedGoals);
     } catch (error) {
-      console.error('Error fetching goals:', error);
+      console.error('Error fetching goals:', error.message, error.stack);
     }
   };
 
@@ -88,7 +88,7 @@ function Goals() {
       handleCloseModal();
       fetchGoals();
     } catch (error) {
-      console.error('Error saving goal:', error);
+      console.error('Error saving goal:', error.message, error.stack);
       setError('Failed to save goal. Please try again.');
     }
   };
@@ -99,7 +99,7 @@ function Goals() {
         await deleteGoal(goalId);
         fetchGoals();
       } catch (error) {
-        console.error('Error deleting goal:', error);
+        console.error('Error deleting goal:', error.message, error.stack);
       }
     }
   };
@@ -113,12 +113,12 @@ function Goals() {
     <div className="container mt-5">
       <div className="row">
         <div className="col-12">
-          <h1>Goals</h1>
-          <button className="btn btn-primary mb-3" onClick={() => handleOpenModal()}>
+          <h1 className="mb-4">Goals</h1>
+          <button className="btn btn-primary mb-4" onClick={() => handleOpenModal()}>
             Manage Goals
           </button>
           <Modal show={showModal} handleClose={handleCloseModal}>
-            <h2>{editingGoal ? 'Edit Goal' : 'Add New Goal'}</h2>
+            <h2 className="mb-3">{editingGoal ? 'Edit Goal' : 'Add New Goal'}</h2>
             <form onSubmit={handleSubmit}>
               {error && <div className="alert alert-danger">{error}</div>}
               <div className="mb-3">
@@ -153,8 +153,8 @@ function Goals() {
           <div className="row">
             {goals.map((goal) => (
               <div key={goal._id} className="col-md-6 col-lg-4 mb-3">
-                <div className="card">
-                  <div className="card-body">
+                <div className="card h-100">
+                  <div className="card-body d-flex flex-column">
                     <h5 className="card-title">{goal.name}</h5>
                     <p className="card-text">
                       Total target: {Object.values(goal.targetMinutes).reduce((a, b) => a + b, 0)} minutes
@@ -162,13 +162,15 @@ function Goals() {
                     <p className="card-text">
                       Streak: {goal.currentStreak} days
                     </p>
-                    <Link to={`/streak-calendar/${goal._id}`} className="btn btn-info mr-2">View Streak</Link>
-                    <button className="btn btn-outline-primary mr-2" onClick={() => handleOpenModal(goal)}>
-                      Edit
-                    </button>
-                    <button className="btn btn-outline-danger" onClick={() => handleDeleteGoal(goal._id)}>
-                      Delete
-                    </button>
+                    <div className="mt-auto">
+                      <Link to={`/streak-calendar/${goal._id}`} className="btn btn-info me-2 mb-2">View Streak</Link>
+                      <button className="btn btn-outline-primary me-2 mb-2" onClick={() => handleOpenModal(goal)}>
+                        Edit
+                      </button>
+                      <button className="btn btn-outline-danger mb-2" onClick={() => handleDeleteGoal(goal._id)}>
+                        Delete
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -178,6 +180,6 @@ function Goals() {
       </div>
     </div>
   );
-};
+}
 
 export default Goals;
