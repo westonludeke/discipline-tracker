@@ -110,10 +110,10 @@ function Goals() {
   };
 
   return (
-    <div className="container mt-5">
+    <div className="container py-5">
       <div className="row">
         <div className="col-12">
-          <h1 className="mb-4">Goals</h1>
+          <h1 className="display-4 mb-4">Goals</h1>
           <button className="btn btn-primary mb-4" onClick={() => handleOpenModal()}>
             Manage Goals
           </button>
@@ -150,16 +150,16 @@ function Goals() {
               <button type="submit" className="btn btn-primary">{editingGoal ? 'Update Goal' : 'Add Goal'}</button>
             </form>
           </Modal>
-          <div className="row">
+          <div className="row g-4">
             {goals.map((goal) => (
-              <div key={goal._id} className="col-md-6 col-lg-4 mb-3">
-                <div className="card h-100">
+              <div key={goal._id} className="col-md-6 col-lg-4">
+                <div className="card h-100 shadow-sm">
                   <div className="card-body d-flex flex-column">
-                    <h5 className="card-title">{goal.name}</h5>
-                    <p className="card-text">
+                    <h5 className="card-title h4 mb-3">{goal.name}</h5>
+                    <p className="card-text mb-2">
                       Total target: {Object.values(goal.targetMinutes).reduce((a, b) => a + b, 0)} minutes
                     </p>
-                    <p className="card-text">
+                    <p className="card-text mb-3">
                       Streak: {goal.currentStreak} days
                     </p>
                     <div className="mt-auto">

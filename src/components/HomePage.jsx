@@ -44,21 +44,21 @@ function HomePage() {
   };
 
   return (
-    <div className="container">
+    <div className="container py-5">
       <div className="row">
         <div className="col-12">
-          <header className="text-center my-4">
-            <h1>Discipline Tracker</h1>
+          <header className="text-center mb-5">
+            <h1 className="display-4 mb-3">Discipline Tracker</h1>
             <div className="d-flex justify-content-center align-items-center">
               <button
-                className="btn btn-outline-secondary mr-2"
+                className="btn btn-outline-secondary me-3"
                 onClick={() => handleDateChange('back')}
               >
                 &lt;
               </button>
-              <h2 className="text-muted mb-0">{currentDate.format('dddd, MMMM DD, YYYY')}</h2>
+              <h2 className="h3 text-muted mb-0">{currentDate.format('dddd, MMMM DD, YYYY')}</h2>
               <button
-                className="btn btn-outline-secondary ml-2"
+                className="btn btn-outline-secondary ms-3"
                 onClick={() => handleDateChange('forward')}
                 disabled={currentDate.isSame(dayjs(), 'day')}
               >
@@ -66,7 +66,6 @@ function HomePage() {
               </button>
             </div>
           </header>
-          {console.log('Rendering GoalsList with:', { goals, currentDay: currentDate.day() })}
           <GoalsList
             goals={goals}
             onSaveProgress={handleSaveProgress}

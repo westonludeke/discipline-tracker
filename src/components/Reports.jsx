@@ -21,12 +21,12 @@ function Reports() {
   }, []);
 
   return (
-    <div className="container mt-5">
+    <div className="container py-5">
       <div className="row">
         <div className="col-12">
-          <h1>Reports</h1>
+          <h1 className="display-4 mb-5">Reports</h1>
           {chartData.map(goalData => (
-            <div key={goalData.goalId} className="mb-4">
+            <div key={goalData.goalId} className="mb-5">
               <MonthlyProgressTable
                 goalName={goalData.goalName}
                 monthlyData={goalData.monthlyData}
