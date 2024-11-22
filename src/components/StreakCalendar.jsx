@@ -7,6 +7,7 @@ import './StreakCalendar.css';
 
 function StreakCalendar() {
   const { goalId } = useParams();
+  console.log('StreakCalendar rendered with goalId:', goalId);
   const [goalData, setGoalData] = useState(null);
   const [calendars, setCalendars] = useState([]);
 
@@ -14,10 +15,9 @@ function StreakCalendar() {
     const fetchGoalData = async () => {
       try {
         const data = await getGoalStreakData(goalId);
-        console.log('Fetched goal streak data:', JSON.stringify(data, null, 2));
+        console.log('Fetched goal data:', data);
         setGoalData(data);
         generateCalendars(data);
-        console.log('Generated calendars:', calendars);
       } catch (error) {
         console.error('Error fetching goal streak data:', error);
       }
@@ -27,6 +27,7 @@ function StreakCalendar() {
   }, [goalId]);
 
   const generateCalendars = (goalData) => {
+    console.log('Generating calendars with goalData:', goalData);
     const today = new Date();
     const calendars = [];
     for (let i = 0; i < 12; i++) {
@@ -39,6 +40,8 @@ function StreakCalendar() {
           const isStreakDay = goalData.streakData && goalData.streakData[dateString];
           const isFirstOfMonth = date.getDate() === 1;
 
+          console.log('Tile className for date:', dateString, 'isStreakDay:', isStreakDay, 'isFirstOfMonth:', isFirstOfMonth);
+
           if (isFirstOfMonth && !isStreakDay) {
             return 'react-calendar__tile--non-active';
           }
@@ -47,6 +50,7 @@ function StreakCalendar() {
         },
       });
     }
+    console.log('Generated calendars:', calendars);
     setCalendars(calendars);
   };
 
@@ -59,22 +63,26 @@ function StreakCalendar() {
       <h1>{goalData.name} Streak Calendar</h1>
       <p>Current Streak: {goalData.currentStreak} days</p>
       <div className="row">
-        {calendars.map((calendarProps, index) => (
-          <div key={index} className="col-md-6 col-lg-4 mb-4">
-            <div className="calendar-wrapper">
-              <h2>{calendarProps.date.toLocaleString('default', { month: 'long', year: 'numeric' })}</h2>
-              <Calendar
-                value={calendarProps.date}
-                tileClassName={calendarProps.tileClassName}
-                showNeighboringMonth={false}
-                prevLabel={null}
-                nextLabel={null}
-                prev2Label={null}
-                next2Label={null}
-              />
+        {calendars.map((calendarProps, index) => {
+          console.log('Rendering calendar for month:', calendarProps.date.toLocaleString('default', { month: 'long', year: 'numeric' }));
+          return (
+            <div key={index} className="col-md-6 col-lg-4 mb-4">
+              <div className="calendar-wrapper">
+                <h2>{calendarProps.date.toLocaleString('default', { month: 'long', year: 'numeric' })}</h2>
+                <Calendar
+                  value={calendarProps.date}
+                  tileClassName={calendarProps.tileClassName}
+                  showNeighboringMonth={false}
+                  prevLabel={null}
+                  nextLabel={null}
+                  prev2Label={null}
+                  next2Label={null}
+                  locale="en-US"
+                />
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
