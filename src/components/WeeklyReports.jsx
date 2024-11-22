@@ -25,6 +25,7 @@ const WeeklyReports = () => {
       setWeeksData(resolvedWeeksData.sort((a, b) => b.startDate.diff(a.startDate)));
     } catch (error) {
       console.error('Error fetching multiple weeks data:', error);
+      console.error('Full error:', error);
     }
   };
 
@@ -37,6 +38,7 @@ const WeeklyReports = () => {
       };
     } catch (error) {
       console.error('Error fetching weekly data:', error);
+      console.error('Full error:', error);
       return null;
     }
   };
@@ -58,27 +60,40 @@ const WeeklyReports = () => {
     return totals;
   };
 
+  const headerStyle = {
+    backgroundColor: '#000000',
+    color: '#ffffff'
+  };
+
+  const goalColumnStyle = {
+    backgroundColor: '#e6f3ff'  // Light blue
+  };
+
+  const targetColumnStyle = {
+    backgroundColor: '#fff0e6'  // Light orange
+  };
+
+  const totalsRowStyle = {
+    backgroundColor: '#74dcf2'
+  };
+
   const renderTable = (weekData) => {
     if (!weekData || weekData.data.length === 0) return <p>No data available for this week.</p>;
 
     const goals = Object.keys(weekData.data[0]).filter(key => key !== 'date');
     const totals = calculateTotals(weekData.data);
 
-    const goalColumnStyle = {
-      backgroundColor: '#d5e0d7'
-    };
-
     return (
       <div className="table-responsive">
-        <table className="table table-bordered">
+        <table className="table table-bordered table-hover">
           <thead>
             <tr>
-              <th>Date</th>
+              <th style={headerStyle}>Date</th>
               {goals.map(goal => (
                 <React.Fragment key={goal}>
-                  <th style={goalColumnStyle}>{goal}</th>
-                  <th>Target</th>
-                  <th>Remaining</th>
+                  <th style={headerStyle}>{goal}</th>
+                  <th style={headerStyle}>Target</th>
+                  <th style={headerStyle}>Remaining</th>
                 </React.Fragment>
               ))}
             </tr>
@@ -92,18 +107,18 @@ const WeeklyReports = () => {
                   return (
                     <React.Fragment key={goal}>
                       <td style={goalColumnStyle}>{minutes}</td>
-                      <td>{target}</td>
+                      <td style={targetColumnStyle}>{target}</td>
                       <td>{remaining}</td>
                     </React.Fragment>
                   );
                 })}
               </tr>
             ))}
-            <tr className="table-active">
+            <tr style={totalsRowStyle}>
               <td><strong>Totals</strong></td>
               {goals.map(goal => (
                 <React.Fragment key={goal}>
-                  <td style={goalColumnStyle}><strong>{totals[goal]?.minutes || 0}</strong></td>
+                  <td><strong>{totals[goal]?.minutes || 0}</strong></td>
                   <td><strong>{totals[goal]?.target || 0}</strong></td>
                   <td><strong>{totals[goal]?.remaining || 0}</strong></td>
                 </React.Fragment>
@@ -125,13 +140,11 @@ const WeeklyReports = () => {
 
   return (
     <div className="container mt-5">
-      <h1>Weekly Reports</h1>
+      <h1 className="mb-4">Weekly Reports</h1>
       {weeksData.map((weekData, index) => (
         <div key={index} className={`mb-5 ${index === currentWeekIndex ? '' : 'd-none'}`}>
-          <h2>Week of {weekData.startDate.format('MMMM D, YYYY')}</h2>
-          <div className="table-responsive">
-            {renderTable(weekData)}
-          </div>
+          <h2 className="mb-3">Week of {weekData.startDate.format('MMMM D, YYYY')}</h2>
+          {renderTable(weekData)}
         </div>
       ))}
       <div className="d-flex justify-content-between mt-3">

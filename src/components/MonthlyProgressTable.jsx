@@ -9,14 +9,14 @@ function MonthlyProgressTable({ goalName, monthlyData, yearlyTotal }) {
   const currentYear = new Date().getFullYear();
 
   return (
-    <div className="mt-4">
+    <div className="table-responsive mt-4">
       <h3>{goalName} - {currentYear}</h3>
-      <table className="table table-striped">
-        <thead>
+      <table className="table table-striped table-hover table-bordered">
+        <thead className="table-dark">
           <tr>
             <th>Month</th>
-            <th>{goalName} Total (minutes)</th>
-            <th>{goalName} Time (hh:mm)</th>
+            <th>Total Minutes</th>
+            <th>Time (hh:mm)</th>
           </tr>
         </thead>
         <tbody>
@@ -30,8 +30,8 @@ function MonthlyProgressTable({ goalName, monthlyData, yearlyTotal }) {
               </tr>
             );
           })}
-          <tr className="table-active">
-            <td><strong>Totals</strong></td>
+          <tr className="table-info">
+            <td><strong>Yearly Total</strong></td>
             <td><strong>{yearlyTotal.totalMinutes}</strong></td>
             <td><strong>{yearlyTotal.formattedTime}</strong></td>
           </tr>

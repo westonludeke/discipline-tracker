@@ -5,127 +5,72 @@ The Discipline Tracker App allows users to track their daily progress on persona
 
 ## Overview
 
-The Discipline Tracker App is built using a modern web stack, leveraging both front-end and back-end technologies to deliver a seamless user experience. The architecture includes a React-based frontend, a Node.js backend, and MongoDB for data storage. The app is styled using Bootstrap to ensure a responsive and professional look.
-
-### Technologies Used
-
-- **Node.js**: JavaScript runtime for building server-side applications.
-- **MongoDB**: NoSQL database for storing user data.
-- **Express**: Web server framework for Node.js.
-- **Mongoose**: MongoDB object modeling tool for Node.js.
-- **Bootstrap**: CSS framework for responsive front-end design.
-- **Body-Parser**: Middleware for parsing incoming request bodies.
-- **CORS**: Middleware for enabling Cross-Origin Resource Sharing.
-- **Morgan**: HTTP request logger middleware for Node.js.
-- **Chart.js**: JavaScript library for creating charts.
-- **jQuery**: JavaScript library for DOM manipulation.
-- **Day.js**: Lightweight JavaScript date library for parsing, validating, manipulating, and formatting dates.
-- **React**: JavaScript library for building user interfaces.
-- **Vite**: Development server and bundler for fast development.
+The Discipline Tracker App is built using modern web technologies to ensure a responsive and smooth user experience. The architecture includes a frontend built with React and styled using Bootstrap, and a backend powered by Node.js and Express, with MongoDB as the database. The project leverages several libraries and tools to facilitate development and enhance functionality, such as Axios for HTTP requests, Mongoose for MongoDB object modeling, and Chart.js for data visualization.
 
 ### Project Structure
 
-```
-discipline-tracker-app/
-├── .eslintrc.cjs
-├── .gitignore
-├── README.md
-├── index.html
-├── package.json
-├── public/
-│   └── .gitkeep
-├── server/
-│   ├── index.js
-│   ├── models/
-│   │   ├── Goal.js
-│   │   └── Progress.js
-│   └── routes/
-│       ├── goals.js
-│       └── weeklyReports.js
-├── src/
-│   ├── App.css
-│   ├── App.jsx
-│   ├── AppRouter.jsx
-│   ├── api/
-│   │   ├── axios.js
-│   │   ├── goals.js
-│   │   └── progress.js
-│   ├── assets/
-│   │   └── .gitkeep
-│   ├── components/
-│   │   ├── GoalProgressChart.jsx
-│   │   ├── Goals.jsx
-│   │   ├── GoalsList.jsx
-│   │   ├── HistoricalLog.jsx
-│   │   ├── HomePage.jsx
-│   │   ├── Import.jsx
-│   │   ├── Modal.jsx
-│   │   ├── MonthlyProgressTable.jsx
-│   │   ├── Navigation.jsx
-│   │   ├── Reports.jsx
-│   │   ├── StreakCalendar.css
-│   │   ├── StreakCalendar.jsx
-│   │   ├── Streaks.jsx
-│   │   └── WeeklyReports.jsx
-│   ├── index.css
-│   ├── main.jsx
-│   └── utils/
-│       └── dataParser.js
-└── vite.config.js
-```
+- **Frontend**: The frontend is developed using React, with Vite as the development server and bundler. The React components are organized in the `src/components` directory.
+- **Backend**: The backend is built with Node.js and Express, with routes and models defined in the `server` directory.
+- **Database**: MongoDB is used as the NoSQL database, with Mongoose for schema definition and data modeling.
+- **Styling**: The application is styled using Bootstrap to ensure a modern and responsive design.
+- **Utilities**: Various utilities and middleware such as body-parser, cors, and morgan are used to handle HTTP requests, enable CORS, and log HTTP requests respectively.
 
 ## Features
 
 ### Add Goals
-- **Manage Goals Page**: Users can add, edit, or delete goals through a modal on the `Goals` page.
-- **Goal Details**: Specify the name of the goal and set target minutes for each day of the week.
+- **Manage Goals Page**: A separate page called `Goals` where users can click a `Manage Goals` button to open a modal for users to add, edit, or delete goals.
+- **Goal Details**: Users can specify the name of the goal and set target minutes for each day of the week.
 
 ### Goals Modal
-- **Input Fields**: Includes fields for goal name and target minutes for each day of the week.
+- **Input Fields**: The modal includes input fields for the goal's name and target minutes for each day of the week.
 
 ### Display Today's Date
 - The homepage displays the current date in a user-friendly format.
 
 ### List Today's Goals
-- Lists all goals with the target minutes for the current day of the week on the homepage.
+- The app lists all goals added by the user, including the target minutes for the current day of the week.
 
 ### Add Goal Minutes
-- Users can input the number of minutes spent on each goal for the day.
+- Users can input the number of minutes spent on each goal for the day and visualize their progress.
 
 ### Toggle Between Days
-- Users can navigate between days to view progress from previous days.
+- Users can toggle between days to view their progress from previous days using forward/back buttons.
 
 ### Progress Tracking
-- **Reports Page**: Shows historical progress, including a monthly progress chart.
+- The `Reports` page shows progress over time, including a historical log of minutes spent on each goal broken down by weeks and months.
 
 ### Streak Tracking
-- **Reports Page**: Tracks consecutive days of goal achievement.
-- **Goals Page**: Displays the current streak for each goal.
+- The `Reports` page tracks consecutive days the user has worked towards their goal, and the `Goals` page displays the current streak for each goal.
 
 ### Streak Calendar
-- Visualizes goal streaks over time with a color-coded calendar.
+- A calendar view for each goal shows goal streaks over time, with visual indicators for days worked towards the goal.
+
+### User Authentication
+- No user authentication is needed currently as the app runs locally.
 
 ### Weekly Reports
-- Provides a detailed breakdown of daily progress grouped by week.
+- A detailed breakdown of each day, grouped by week, showing progress on different goals and target minutes remaining.
 
 ### Import Page
-- Allows users to import progress data from a text field.
+- Users can import metrics by pasting data into a field and clicking an import button.
 
 ### Style the Website with Bootstrap
-- The website is styled using Bootstrap for a modern and responsive design.
+- The website is styled using Bootstrap to ensure a modern and professional look and feel.
 
-## Getting Started
+## Getting started
 
 ### Requirements
 
+To run the Discipline Tracker App, you need to have the following technologies installed on your computer:
+
 - Node.js
-- MongoDB (local installation or MongoDB Atlas)
+- MongoDB (or use a cloud version like MongoDB Atlas)
 
 ### Quickstart
 
 1. **Clone the repository**:
     ```bash
-    git clone https://github.com/yourusername/discipline-tracker-app.git
+    git clone <repository-url>
     cd discipline-tracker-app
     ```
 
@@ -135,17 +80,24 @@ discipline-tracker-app/
     ```
 
 3. **Set up MongoDB**:
-    - Ensure MongoDB is running locally or configure MongoDB Atlas.
+    - Ensure MongoDB is running locally or configure a cloud version.
 
-4. **Start the development server**:
+4. **Run the backend server**:
     ```bash
+    cd server
+    node index.js
+    ```
+
+5. **Run the frontend development server**:
+    ```bash
+    cd ..
     npm run dev
     ```
 
-5. **Open the app**:
-    - Visit `http://localhost:3000` in your web browser.
+6. **Access the app**:
+    - Open your browser and navigate to `http://localhost:3000`.
 
 ### License
 
-The project is proprietary (not open source). Copyright (c) 2024.
+This project is proprietary. All rights reserved. Copyright (c) 2024.
 ```
