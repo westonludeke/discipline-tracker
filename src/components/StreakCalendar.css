@@ -36,11 +36,16 @@
 
 .react-calendar__tile.streak-day {
   background-color: #4caf50;
-  color: white;
+  color: white !important; /* Use !important to override any specific day styles */
 }
 
 .react-calendar__tile.streak-day:hover {
   background-color: #45a049;
+  color: white !important;
+}
+
+.react-calendar__tile.streak-day:nth-child(7n + 6) {
+  color: white !important;
 }
 
 /* Ensure the calendar layout is correct with Sunday as the first day */
