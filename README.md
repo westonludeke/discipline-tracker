@@ -1,4 +1,3 @@
-```markdown
 # Discipline Tracker App
 
 The Discipline Tracker App allows users to track their daily progress on personal goals, enabling them to see how their discipline evolves over time. The app provides an intuitive interface for goal management and progress tracking, fostering accountability and motivation.
@@ -109,5 +108,4 @@ discipline-tracker-app/
 
 ### License
 
-Copyright (c) 2024.
-```
+This project is open source and licensed under the MIT License. You are free to fork, modify, distribute, and use this project.
