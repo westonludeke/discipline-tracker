@@ -85,7 +85,7 @@ discipline-tracker-app/
 
 1. **Clone the repository:**
    ```sh
-   git clone https://github.com/your-username/discipline-tracker-app.git
+   git clone https://github.com/westonludeke/discipline-tracker.git
    cd discipline-tracker-app
    ```
 
