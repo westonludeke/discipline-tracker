@@ -47,7 +47,7 @@ function HomePage() {
     <div className="container py-5">
       <div className="row">
         <div className="col-12">
-          <header className="text-center mb-5">
+          <header className="text-center mb-4">
             <h1 className="display-4 mb-3">Discipline Tracker</h1>
             <div className="d-flex justify-content-center align-items-center">
               <button

@@ -61,7 +61,6 @@ function GoalsList({ goals, onSaveProgress, currentDay }) {
 
   return (
     <div className="goals-list mt-4">
-      <h3>Your Goals for {getDayName(currentDay)}</h3>
       {goals.length === 0 ? (
         <p>No goals added yet. Add some goals to get started!</p>
       ) : (
