@@ -58,19 +58,21 @@ function StreakCalendar() {
     <div className="container mt-5">
       <h1>{goalData.name} Streak Calendar</h1>
       <p>Current Streak: {goalData.currentStreak} days</p>
-      <div className="calendars-container">
+      <div className="row">
         {calendars.map((calendarProps, index) => (
-          <div key={index} className="calendar-wrapper">
-            <h2>{calendarProps.date.toLocaleString('default', { month: 'long', year: 'numeric' })}</h2>
-            <Calendar
-              value={calendarProps.date}
-              tileClassName={calendarProps.tileClassName}
-              showNeighboringMonth={false}
-              prevLabel={null}
-              nextLabel={null}
-              prev2Label={null}
-              next2Label={null}
-            />
+          <div key={index} className="col-md-6 col-lg-4 mb-4">
+            <div className="calendar-wrapper">
+              <h2>{calendarProps.date.toLocaleString('default', { month: 'long', year: 'numeric' })}</h2>
+              <Calendar
+                value={calendarProps.date}
+                tileClassName={calendarProps.tileClassName}
+                showNeighboringMonth={false}
+                prevLabel={null}
+                nextLabel={null}
+                prev2Label={null}
+                next2Label={null}
+              />
+            </div>
           </div>
         ))}
       </div>

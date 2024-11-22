@@ -18,21 +18,25 @@ function Import() {
 
   return (
     <div className="container mt-4">
-      <h1>Import Data</h1>
-      <div className="form-group">
-        <label htmlFor="importTextArea">Paste your data here:</label>
-        <textarea
-          className="form-control"
-          id="importTextArea"
-          rows="10"
-          value={inputData}
-          onChange={(e) => setInputData(e.target.value)}
-        ></textarea>
+      <div className="row">
+        <div className="col-12">
+          <h1>Import Data</h1>
+          <div className="form-group">
+            <label htmlFor="importTextArea">Paste your data here:</label>
+            <textarea
+              className="form-control"
+              id="importTextArea"
+              rows="10"
+              value={inputData}
+              onChange={(e) => setInputData(e.target.value)}
+            ></textarea>
+          </div>
+          <button className="btn btn-primary" onClick={handleImport}>
+            Import
+          </button>
+          {message && <div className="alert alert-success mt-3">{message}</div>}
+        </div>
       </div>
-      <button className="btn btn-primary" onClick={handleImport}>
-        Import
-      </button>
-      {message && <div className="alert alert-success mt-3">{message}</div>}
     </div>
   );
 }

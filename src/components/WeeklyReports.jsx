@@ -69,47 +69,49 @@ const WeeklyReports = () => {
     };
 
     return (
-      <table className="table table-bordered">
-        <thead>
-          <tr>
-            <th>Date</th>
-            {goals.map(goal => (
-              <React.Fragment key={goal}>
-                <th style={goalColumnStyle}>{goal}</th>
-                <th>Target</th>
-                <th>Remaining</th>
-              </React.Fragment>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {weekData.data.map((day, index) => (
-            <tr key={index}>
-              <td>{dayjs(day.date).format('dddd, MMMM D')}</td>
-              {goals.map(goal => {
-                const { minutes, target, remaining } = day[goal];
-                return (
-                  <React.Fragment key={goal}>
-                    <td style={goalColumnStyle}>{minutes}</td>
-                    <td>{target}</td>
-                    <td>{remaining}</td>
-                  </React.Fragment>
-                );
-              })}
+      <div className="table-responsive">
+        <table className="table table-bordered">
+          <thead>
+            <tr>
+              <th>Date</th>
+              {goals.map(goal => (
+                <React.Fragment key={goal}>
+                  <th style={goalColumnStyle}>{goal}</th>
+                  <th>Target</th>
+                  <th>Remaining</th>
+                </React.Fragment>
+              ))}
             </tr>
-          ))}
-          <tr className="table-active">
-            <td><strong>Totals</strong></td>
-            {goals.map(goal => (
-              <React.Fragment key={goal}>
-                <td style={goalColumnStyle}><strong>{totals[goal]?.minutes || 0}</strong></td>
-                <td><strong>{totals[goal]?.target || 0}</strong></td>
-                <td><strong>{totals[goal]?.remaining || 0}</strong></td>
-              </React.Fragment>
+          </thead>
+          <tbody>
+            {weekData.data.map((day, index) => (
+              <tr key={index}>
+                <td>{dayjs(day.date).format('dddd, MMMM D')}</td>
+                {goals.map(goal => {
+                  const { minutes, target, remaining } = day[goal];
+                  return (
+                    <React.Fragment key={goal}>
+                      <td style={goalColumnStyle}>{minutes}</td>
+                      <td>{target}</td>
+                      <td>{remaining}</td>
+                    </React.Fragment>
+                  );
+                })}
+              </tr>
             ))}
-          </tr>
-        </tbody>
-      </table>
+            <tr className="table-active">
+              <td><strong>Totals</strong></td>
+              {goals.map(goal => (
+                <React.Fragment key={goal}>
+                  <td style={goalColumnStyle}><strong>{totals[goal]?.minutes || 0}</strong></td>
+                  <td><strong>{totals[goal]?.target || 0}</strong></td>
+                  <td><strong>{totals[goal]?.remaining || 0}</strong></td>
+                </React.Fragment>
+              ))}
+            </tr>
+          </tbody>
+        </table>
+      </div>
     );
   };
 
@@ -127,7 +129,9 @@ const WeeklyReports = () => {
       {weeksData.map((weekData, index) => (
         <div key={index} className={`mb-5 ${index === currentWeekIndex ? '' : 'd-none'}`}>
           <h2>Week of {weekData.startDate.format('MMMM D, YYYY')}</h2>
-          {renderTable(weekData)}
+          <div className="table-responsive">
+            {renderTable(weekData)}
+          </div>
         </div>
       ))}
       <div className="d-flex justify-content-between mt-3">

@@ -45,31 +45,35 @@ function HomePage() {
 
   return (
     <div className="container">
-      <header className="text-center my-4">
-        <h1>Discipline Tracker</h1>
-        <div className="d-flex justify-content-center align-items-center">
-          <button
-            className="btn btn-outline-secondary mr-2"
-            onClick={() => handleDateChange('back')}
-          >
-            &lt;
-          </button>
-          <h2 className="text-muted mb-0">{currentDate.format('dddd, MMMM DD, YYYY')}</h2>
-          <button
-            className="btn btn-outline-secondary ml-2"
-            onClick={() => handleDateChange('forward')}
-            disabled={currentDate.isSame(dayjs(), 'day')}
-          >
-            &gt;
-          </button>
+      <div className="row">
+        <div className="col-12">
+          <header className="text-center my-4">
+            <h1>Discipline Tracker</h1>
+            <div className="d-flex justify-content-center align-items-center">
+              <button
+                className="btn btn-outline-secondary mr-2"
+                onClick={() => handleDateChange('back')}
+              >
+                &lt;
+              </button>
+              <h2 className="text-muted mb-0">{currentDate.format('dddd, MMMM DD, YYYY')}</h2>
+              <button
+                className="btn btn-outline-secondary ml-2"
+                onClick={() => handleDateChange('forward')}
+                disabled={currentDate.isSame(dayjs(), 'day')}
+              >
+                &gt;
+              </button>
+            </div>
+          </header>
+          {console.log('Rendering GoalsList with:', { goals, currentDay: currentDate.day() })}
+          <GoalsList
+            goals={goals}
+            onSaveProgress={handleSaveProgress}
+            currentDay={currentDate.day()}
+          />
         </div>
-      </header>
-      {console.log('Rendering GoalsList with:', { goals, currentDay: currentDate.day() })}
-      <GoalsList
-        goals={goals}
-        onSaveProgress={handleSaveProgress}
-        currentDay={currentDate.day()}
-      />
+      </div>
     </div>
   );
 }

@@ -22,15 +22,20 @@ function Reports() {
 
   return (
     <div className="container mt-5">
-      <h1>Reports</h1>
-      {chartData.map(goalData => (
-        <MonthlyProgressTable
-          key={goalData.goalId}
-          goalName={goalData.goalName}
-          monthlyData={goalData.monthlyData}
-          yearlyTotal={goalData.yearlyTotal}
-        />
-      ))}
+      <div className="row">
+        <div className="col-12">
+          <h1>Reports</h1>
+          {chartData.map(goalData => (
+            <div key={goalData.goalId} className="mb-4">
+              <MonthlyProgressTable
+                goalName={goalData.goalName}
+                monthlyData={goalData.monthlyData}
+                yearlyTotal={goalData.yearlyTotal}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
