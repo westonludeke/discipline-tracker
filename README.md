@@ -1,3 +1,4 @@
+```markdown
 # Discipline Tracker App
 
 The Discipline Tracker App allows users to track their daily progress on personal goals, enabling them to see how their discipline evolves over time. The app provides an intuitive interface for goal management and progress tracking, fostering accountability and motivation.
@@ -98,7 +99,7 @@ discipline-tracker-app/
    - Ensure MongoDB is running locally or set up MongoDB Atlas.
    - Update the MongoDB connection string in `server/index.js` if necessary.
 
-4. **Run the development server:**
+4. **Run the development server and the frontend:**
    ```sh
    npm run dev
    ```
@@ -108,4 +109,5 @@ discipline-tracker-app/
 
 ### License
 
-This project is open source and licensed under the MIT License. You are free to fork, modify, distribute, and use this project.
+Copyright (c) 2024.
+```
